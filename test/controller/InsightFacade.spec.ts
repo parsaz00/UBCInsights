@@ -75,7 +75,7 @@ describe("InsightFacade", function () {
 				facade.addDataset("sections", sections, InsightDatasetKind.Sections),
 			];
 
-			return Promise.all(loadDatasetPromises);
+			return Promise.all(loadDatasetPromises); // review
 		});
 
 		after(function () {
@@ -92,11 +92,18 @@ describe("InsightFacade", function () {
 			{
 				assertOnResult: (actual, expected) => {
 					// TODO add an assertion!
+					expect(actual).to.deep.equal(expected); // deep equal: cares about order
 				},
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
 				assertOnError: (actual, expected) => {
-					// TODO add an assertion!
+					if (expected === "ResultTooLargeError") {
+						expect(actual).to.be.instanceof(ResultTooLargeError);
+					} else if (expected === "InsightError") {
+						expect(actual).to.be.instanceof(InsightError);
+					} else {
+						console.log("Error was thrown, but was not ResultTooLarge or InsightError");
+					}
 				},
 			}
 		);
