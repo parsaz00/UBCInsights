@@ -12,6 +12,7 @@ import {OptionNode} from "./OptionNode";
 export class QueryNode {
 	private whereNode: WhereNode;
 	private optionNode: OptionNode;
+	private dataSetID: string;
 
 	/**
 	 * The constructor for the QueryNode class
@@ -19,12 +20,13 @@ export class QueryNode {
 	 * NOTES: right now, optionNode will throw it's own error, whereas I am relying on queryNode to catch WhereNode
 	 * error, as the constructor for WhereNode does not throw an error
 	 */
-	constructor(query: any) {
+	constructor(query: any, dataSetID: string) {
 		if (!query.WHERE || !query.OPTIONS) {
 			throw new InsightError("Query must contain both a WHERE and an OPTIONS clause");
 		}
-		this.whereNode = new WhereNode(query.WHERE);
-		this.optionNode = new OptionNode(query.OPTIONS);
+		this.dataSetID = dataSetID;
+		this.whereNode = new WhereNode(query.WHERE, this.dataSetID);
+		this.optionNode = new OptionNode(query.OPTIONS, this.dataSetID);
 	}
 
 	/**
@@ -48,5 +50,4 @@ export class QueryNode {
 		const filteredResults = this.whereNode.evaluate(dataset);
 		return this.optionNode.evaluate(filteredResults);
 	}
-
 }
