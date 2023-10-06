@@ -7,10 +7,8 @@ import {
 	NotFoundError,
 } from "./IInsightFacade";
 import {DataSet, DataSetManager, Section, TempSection} from "./DataSet";
-
 import * as fs from "fs-extra";
 import JSZip from "jszip";
-import path from "node:path";
 
 // folder that contains the zip files
 const zipFolder = "./project_team127/test/resources/archives";
@@ -73,7 +71,7 @@ export default class InsightFacade implements IInsightFacade {
 		});
 
 		// JSON files of courses should be in the following path
-		const coursePath = path.join(outputFolder, folderName);
+		const coursePath = outputFolder + "./" + folderName;
 
 		/* read through all JSON files in the outputFolder and validate them against the schema. If not valid, delete the
          JSON file. If valid, copy the data to a temp class called TempSection, transfer the identifier of TempSection to
@@ -88,7 +86,7 @@ export default class InsightFacade implements IInsightFacade {
 
 		// write the tempDataSet into JSON file on the disk
 		const jsonString = JSON.stringify(tempDataSet, null, 2);
-		const patha = path.join(dataSetFolder, id);
+		const patha = dataSetFolder + "./" + id;
 		await writeToJsonFile(patha, jsonString);
 		tempDataSet.numRows = tempDataSet.section.length;
 		return Promise.resolve(keysArray);
@@ -104,7 +102,7 @@ export default class InsightFacade implements IInsightFacade {
 		if (!datasetmap.map.has(id)) {
 			return Promise.reject(new NotFoundError("Id not Found"));
 		}
-		const fullFilePath = path.join(dataSetFolder, id); // Replace with the full path to the file
+		const fullFilePath = dataSetFolder + "./" + id; // Replace with the full path to the file
 		// delete the file from disk
 		deleteFile(fullFilePath)
 			.then(() => {
@@ -148,9 +146,9 @@ async function unzipZipFileFromString(zipFileContent: string, outputF: string): 
 		await Promise.all(
 			Object.keys(zip.files).map(async (fileName) => {
 				const fileData = await zip.files[fileName].async("nodebuffer");
-				const outputPath = path.join(outputF, fileName);
+				const outputPath = outputF + "./" + fileName;
 
-				await fs.ensureDir(path.dirname(outputPath));
+				await fs.ensureDir(outputF);
 				await fs.writeFile(outputPath, fileData);
 				console.log(`Extracted: ${outputPath}`);
 			})
@@ -204,9 +202,9 @@ async function processFiles(coursePath: string, schema: any, dataset: DataSet) {
 		// Use Promise.all to parallelize file processing
 		await Promise.all(
 			files.map(async (file) => {
-				const filePath = path.join(coursePath, file);
+				const filePath = coursePath + "./" + file;
 
-				if (path.extname(file) === ".json") {
+				if (isJsonFile(filePath)) {
 					try {
 						const data = await fs.readFile(filePath, "utf8");
 						const jsonArray = JSON.parse(data);
@@ -272,4 +270,12 @@ async function deleteFile(filePath: string): Promise<void> {
 		console.error(`Error deleting file ${filePath}:`, error);
 		return Promise.reject(new InsightError("Invalid deleting path"));
 	}
+}
+
+function isJsonFile(filePath: string): boolean {
+	// Get the last portion of the file path after the last '/'
+	const fileName = filePath.substr(filePath.lastIndexOf("/") + 1);
+
+	// Check if the file name ends with '.json'
+	return fileName.endsWith(".json");
 }
