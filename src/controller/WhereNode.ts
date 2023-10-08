@@ -1,7 +1,6 @@
 import {InsightError, ResultTooLargeError} from "./IInsightFacade";
 import {FilterValidator} from "./FilterValidator";
 
-
 // Sources used:
 // 1. ChatGPT and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 // 		used for Object.prototype.hasOwnProperty.call() method in private helper methods for evaluate
@@ -28,8 +27,8 @@ export class WhereNode {
 		} else {
 			this.filter = whereClause;
 		}
-		this.dataSetID = dataSetID;  // Initialize the dataSetID member
-		this.filterValidator = new FilterValidator(this.dataSetID);  // Initialize the FilterValidator with the dataSetID
+		this.dataSetID = dataSetID; // Initialize the dataSetID member
+		this.filterValidator = new FilterValidator(this.dataSetID); // Initialize the FilterValidator with the dataSetID
 	}
 
 	/**
@@ -71,7 +70,7 @@ export class WhereNode {
 		const filterValue = this.filter[filterKey];
 
 		// switch case to handle the different types of filters
-		switch(filterKey) {
+		switch (filterKey) {
 			case "GT":
 				filteredResult = this.evaluateGT(filterValue, dataset);
 				break;
@@ -92,6 +91,7 @@ export class WhereNode {
 				break;
 			case "NOT":
 				filteredResult = this.evaluateNOT(filterValue, dataset);
+				break;
 			default:
 				return [];
 		}
@@ -111,7 +111,6 @@ export class WhereNode {
 			// Ensure the field exists in the entry and its value is greater than the specified value
 			return Object.prototype.hasOwnProperty.call(entry, field) && entry[field] > value;
 		});
-
 		return filteredResults;
 	}
 	private evaluateLT(filterValue: any, dataset: any[]) {
@@ -231,7 +230,6 @@ export class WhereNode {
 	private evaluateNOT(filterValue: any, dataset: any[]) {
 		const whereNode = new WhereNode(filterValue, this.dataSetID);
 		const filteredResults = whereNode.evaluate(dataset);
-
 		let notFilteredResults: any[] = [];
 		for (let entry of dataset) {
 			if (!filteredResults.includes(entry)) {

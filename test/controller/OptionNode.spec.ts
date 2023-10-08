@@ -4,7 +4,6 @@ import {InsightError} from "../../src/controller/IInsightFacade";
 import {OptionNode} from "../../src/controller/OptionNode";
 
 describe("Test suite for the OptionNode class", function () {
-
 	describe("Constructor Tests for OptionNode", function () {
 		it("should init with valid COLUMNS and no ORDER", function () {
 			const option = {COLUMNS: ["sections_avg", "sections_dept"]};
@@ -13,7 +12,7 @@ describe("Test suite for the OptionNode class", function () {
 		it("should init with valid COLUMNs and valid ORDER", function () {
 			const option = {
 				COLUMNS: ["sections_avg", "sections_dept"],
-				ORDER: "sections_avg"
+				ORDER: "sections_avg",
 			};
 			expect(() => new OptionNode(option, "sections")).to.not.throw();
 		});
@@ -40,7 +39,7 @@ describe("Test suite for the OptionNode class", function () {
 		it("should return true if COLUMNS contains valid fields and ORDER is present", function () {
 			const option = {
 				COLUMNS: ["sections_avg", "sections_dept"],
-				ORDER: "sections_avg"
+				ORDER: "sections_avg",
 			};
 			const optionNode = new OptionNode(option, "sections");
 			expect(optionNode.validate()).to.be.true;
@@ -53,7 +52,7 @@ describe("Test suite for the OptionNode class", function () {
 		it("should return false if the ORDER is not one of the COLUMNS fields", function () {
 			const option = {
 				COLUMNS: ["sections_avg", "sections_dept"],
-				ORDER: "sections_instructor"
+				ORDER: "sections_instructor",
 			};
 			const optionNode = new OptionNode(option, "sections");
 			expect(optionNode.validate()).to.be.false;
@@ -61,7 +60,7 @@ describe("Test suite for the OptionNode class", function () {
 		it("should return false if ORDER is not a string", function () {
 			const option = {
 				COLUMNS: ["sections_avg", "sections_dept"],
-				ORDER: 195
+				ORDER: 195,
 			};
 			const optionNode = new OptionNode(option, "sections");
 			expect(optionNode.validate()).to.be.false;
@@ -73,7 +72,7 @@ describe("Test suite for the OptionNode class", function () {
 			const mockDataSet = [
 				{sections_avg: 85, sections_dept: "math"},
 				{sections_avg: 95, sections_dept: "cpsc"},
-				{sections_avg: 75, sections_dept: "bio"}
+				{sections_avg: 75, sections_dept: "bio"},
 			];
 			const option = {COLUMNS: ["sections_avg", "sections_dept"]};
 			const optionNode = new OptionNode(option, "sections");
@@ -84,46 +83,45 @@ describe("Test suite for the OptionNode class", function () {
 			const mockDataSet = [
 				{sections_avg: 85, sections_dept: "math"},
 				{sections_avg: 95, sections_dept: "cpsc"},
-				{sections_avg: 75, sections_dept: "bio"}
+				{sections_avg: 75, sections_dept: "bio"},
 			];
 			const option = {
-				COLUMNS: ["sections_avg", "sections_dept"]
-				, ORDER: "sections_avg"
+				COLUMNS: ["sections_avg", "sections_dept"],
+				ORDER: "sections_avg",
 			};
 			const optionNode = new OptionNode(option, "sections");
 			const result = optionNode.evaluate(mockDataSet);
 			const expected = [
 				{sections_avg: 75, sections_dept: "bio"},
 				{sections_avg: 85, sections_dept: "math"},
-				{sections_avg: 95, sections_dept: "cpsc"}
+				{sections_avg: 95, sections_dept: "cpsc"},
 			];
 			expect(result).to.deep.equal(expected);
 		});
 		it("should return an empty array when the dataset is empty", function () {
 			const mockDataset: any[] = [];
 			const option = {
-				COLUMNS: ["sections_avg", "sections_dept"]
-				, ORDER: "sections_avg"
+				COLUMNS: ["sections_avg", "sections_dept"],
+				ORDER: "sections_avg",
 			};
 			const optionNode = new OptionNode(option, "sections");
 			const result = optionNode.evaluate(mockDataset);
 			expect(result).to.deep.equal([]);
 		});
-		it("should correctly sort the dataset if there are duplicate values for the ORDER field"
-			, function () {
-				const mockDataSet = [
-					{sections_avg: 85, sections_dept: "math"},
-					{sections_avg: 85, sections_dept: "cpsc"},
-					{sections_avg: 75, sections_dept: "bio"}
-				];
-				const option = {COLUMNS: ["sections_avg", "sections_dept"], ORDER: "sections_avg"};
-				const optionNode = new OptionNode(option, "sections");
-				const result = optionNode.evaluate(mockDataSet);
-				expect(result).to.deep.equal([
-					{sections_avg: 75, sections_dept: "bio"},
-					{sections_avg: 85, sections_dept: "math"},
-					{sections_avg: 85, sections_dept: "cpsc"}
-				]);
-			});
+		it("should correctly sort the dataset if there are duplicate values for the ORDER field", function () {
+			const mockDataSet = [
+				{sections_avg: 85, sections_dept: "math"},
+				{sections_avg: 85, sections_dept: "cpsc"},
+				{sections_avg: 75, sections_dept: "bio"},
+			];
+			const option = {COLUMNS: ["sections_avg", "sections_dept"], ORDER: "sections_avg"};
+			const optionNode = new OptionNode(option, "sections");
+			const result = optionNode.evaluate(mockDataSet);
+			expect(result).to.deep.equal([
+				{sections_avg: 75, sections_dept: "bio"},
+				{sections_avg: 85, sections_dept: "math"},
+				{sections_avg: 85, sections_dept: "cpsc"},
+			]);
+		});
 	});
 });

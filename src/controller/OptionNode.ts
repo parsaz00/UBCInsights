@@ -80,8 +80,7 @@ export class OptionNode {
 	}
 
 	private isValidField(field: string) {
-		const validSuffixes = ["uuid", "id", "title", "instructor", "dept", "year", "avg",
-			"pass", "fail", "audit"];
+		const validSuffixes = ["uuid", "id", "title", "instructor", "dept", "year", "avg", "pass", "fail", "audit"];
 		const validFields = validSuffixes.map((suffix) => `${this.dataSetID}_${suffix}`);
 		return validFields.includes(field);
 	}

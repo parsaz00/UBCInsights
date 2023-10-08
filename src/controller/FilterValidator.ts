@@ -10,7 +10,7 @@ export class FilterValidator {
 	 */
 	constructor(dataSetID: string) {
 		this.dataSetID = dataSetID;
-	};
+	}
 
 	/**
 	 * Method to determine the filter type and handle the validation accordingly
@@ -50,7 +50,7 @@ export class FilterValidator {
 	// Validate LCOMPARATOR (AND, OR)
 	private validateLComparator(filters: any[]): boolean {
 		// first let's check if the filter is indeed an array as it has to be for LComparators
-		if(!Array.isArray(filters)) {
+		if (!Array.isArray(filters)) {
 			return false;
 		}
 
@@ -97,8 +97,7 @@ export class FilterValidator {
 	}
 	// FIRST PART BEFORE underscore is dynamic
 	private isValidField(field: string): boolean {
-		const validSuffixes = ["uuid", "id", "title", "instructor", "dept", "year", "avg",
-			"pass", "fail", "audit"];
+		const validSuffixes = ["uuid", "id", "title", "instructor", "dept", "year", "avg", "pass", "fail", "audit"];
 		const validFields = validSuffixes.map((suffix) => `${this.dataSetID}_${suffix}`);
 		return validFields.includes(field);
 	}

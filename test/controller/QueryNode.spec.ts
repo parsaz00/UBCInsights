@@ -48,13 +48,13 @@ describe("QueryNode unit tests and validation tests", function () {
 		const query = {
 			WHERE: {
 				GT: {
-					sections_avg: 90
-				}
+					sections_avg: 90,
+				},
 			},
 			OPTIONS: {
 				COLUMNS: ["sections_dept", "sections_avg"],
-				ORDER: "sections_avg"
-			}
+				ORDER: "sections_avg",
+			},
 		};
 		expect(() => new QueryNode(query, "sections")).to.not.throw();
 	});
@@ -62,8 +62,8 @@ describe("QueryNode unit tests and validation tests", function () {
 		const query = {
 			WHERE: {},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
-			}
+				COLUMNS: ["sections_dept", "sections_avg"],
+			},
 		};
 		expect(() => new QueryNode(query, "sections")).to.not.throw();
 	});
@@ -71,8 +71,8 @@ describe("QueryNode unit tests and validation tests", function () {
 		const query = {
 			WHERE: "invalid",
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
-			}
+				COLUMNS: ["sections_dept", "sections_avg"],
+			},
 		};
 		expect(() => new QueryNode(query, "sections")).to.throw(InsightError);
 	});
@@ -81,17 +81,14 @@ describe("QueryNode unit tests and validation tests", function () {
 			WHERE: {
 				OR: [
 					{
-						AND: [
-							{GT: {sections_avg: 90}},
-							{IS: {sections_dept: "cpsc"}}
-						]
+						AND: [{GT: {sections_avg: 90}}, {IS: {sections_dept: "cpsc"}}],
 					},
-					{IS: {sections_dept: "math"}}
-				]
+					{IS: {sections_dept: "math"}},
+				],
 			},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
-			}
+				COLUMNS: ["sections_dept", "sections_avg"],
+			},
 		};
 		expect(() => new QueryNode(query, "sections")).to.not.throw();
 	});
@@ -101,32 +98,26 @@ describe("QueryNode unit tests and validation tests", function () {
 				NOT: {
 					OR: [
 						{
-							AND: [
-								{GT: {sections_avg: 90}},
-								{IS: {sections_dept: "cpsc"}}
-							]
+							AND: [{GT: {sections_avg: 90}}, {IS: {sections_dept: "cpsc"}}],
 						},
-						{IS: {sections_dept: "math"}}
-					]
-				}
+						{IS: {sections_dept: "math"}},
+					],
+				},
 			},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
-			}
+				COLUMNS: ["sections_dept", "sections_avg"],
+			},
 		};
 		expect(() => new QueryNode(query, "sections")).to.not.throw();
 	});
 	it("should not throw an error for valid MCOMPARISON and SCOMPARISON", function () {
 		const query = {
 			WHERE: {
-				AND: [
-					{GT: {sections_avg: 90}},
-					{IS: {sections_dept: "cpsc"}}
-				]
+				AND: [{GT: {sections_avg: 90}}, {IS: {sections_dept: "cpsc"}}],
 			},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
-			}
+				COLUMNS: ["sections_dept", "sections_avg"],
+			},
 		};
 		expect(() => new QueryNode(query, "sections")).to.not.throw();
 	});
@@ -158,7 +149,6 @@ describe("QueryNode unit tests and validation tests", function () {
 	// 	expect(() => queryNode.validate()).to.throw(InsightError);
 	// });
 
-
 	// it("should throw an InsightError for invalid SCOMPARISON", function () {
 	// 	const query = {
 	// 		WHERE: {
@@ -172,5 +162,4 @@ describe("QueryNode unit tests and validation tests", function () {
 	// 	};
 	// 	expect(() => new QueryNode(query, "sections")).to.throw(InsightError);
 	// });
-
 });

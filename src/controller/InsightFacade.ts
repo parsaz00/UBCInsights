@@ -4,7 +4,8 @@ import {
 	InsightDatasetKind,
 	InsightError,
 	InsightResult,
-	NotFoundError, ResultTooLargeError,
+	NotFoundError,
+	ResultTooLargeError,
 } from "./IInsightFacade";
 import {QueryNode} from "./QueryNode";
 import e from "express";

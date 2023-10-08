@@ -56,6 +56,10 @@ describe("InsightFacade", function () {
 			const result = facade.addDataset("", sections, InsightDatasetKind.Sections);
 			return expect(result).to.eventually.be.rejectedWith(InsightError);
 		});
+		it("should reject with a whitespace dataset ID", function () {
+			const result = facade.addDataset(" ", sections, InsightDatasetKind.Sections);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
 	});
 
 	/*
