@@ -41,8 +41,6 @@ const Schema = {
 	required: ["id", "Course", "Title", "Professor", "Subject", "Year", "Avg", "Pass", "Fail", "Audit"],
 };
 
-console.log(Schema);
-
 export default class InsightFacade implements IInsightFacade {
 	constructor() {
 		console.log("InsightFacadeImpl::init()");
@@ -63,6 +61,7 @@ export default class InsightFacade implements IInsightFacade {
 
 		// create dataset for the data with name id
 		let tempDataSet: DataSet = new DataSet(id, [], kind, 0);
+		console.log(Schema);
 
 		// unzip the zip file from zipFolder to JSON files and put them in outputFolder
 		unzipZipFileFromString(content, outputFolder).catch((error) => {
