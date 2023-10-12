@@ -1,11 +1,10 @@
 import {expect} from "chai";
-import {FilterValidator} from "../../src/controller/FilterValidator";
+import {FilterValidator} from "../src/controller/FilterValidator";
 
 describe("test suite for filter validator", function () {
 	const datasetID = "sections";
 	const filterValidator = new FilterValidator(datasetID);
 	describe("validateFilterTests for MComparators", function () {
-
 		it("should return true for a valid GT filter", function () {
 			const filter = {GT: {sections_avg: 90}};
 			expect(filterValidator.validateFilter(filter)).to.be.true;
@@ -60,19 +59,13 @@ describe("test suite for filter validator", function () {
 	describe("validateFilter tests for LComparators", function () {
 		it("should return true for a valid AND logic filter with multiple filters inside", function () {
 			const filter = {
-				AND: [
-					{GT: {sections_avg:92}},
-					{IS: {sections_dept : "cpsc"}}
-				]
+				AND: [{GT: {sections_avg: 92}}, {IS: {sections_dept: "cpsc"}}],
 			};
 			expect(filterValidator.validateFilter(filter)).to.be.true;
 		});
 		it("should return true for a valid OR logic filter with multiple filters inside", function () {
 			const filter = {
-				OR: [
-					{GT: {sections_avg: 95}},
-					{LT: {sections_avg: 52}}
-				]
+				OR: [{GT: {sections_avg: 95}}, {LT: {sections_avg: 52}}],
 			};
 			expect(filterValidator.validateFilter(filter)).to.be.true;
 		});
@@ -84,14 +77,11 @@ describe("test suite for filter validator", function () {
 						OR: [
 							{EQ: {sections_avg: 91}},
 							{
-								AND: [
-									{GT: {sections_avg: 85}},
-									{IS: {sections_dept: "math"}}
-								]
-							}
-						]
-					}
-				]
+								AND: [{GT: {sections_avg: 85}}, {IS: {sections_dept: "math"}}],
+							},
+						],
+					},
+				],
 			};
 			expect(filterValidator.validateFilter(filter)).to.be.true;
 		});
@@ -100,16 +90,13 @@ describe("test suite for filter validator", function () {
 				OR: [
 					{GT: {sections_avg: 93}},
 					{
-						AND: [
-							{EQ: {sections_avg: 85}},
-							{IS: {sections_title: "*c"}}
-						]
-					}
-				]
+						AND: [{EQ: {sections_avg: 85}}, {IS: {sections_title: "*c"}}],
+					},
+				],
 			};
 			expect(filterValidator.validateFilter(filter)).to.be.true;
 		});
-		it ("should return false for an invalid AND filter with non-array value", function () {
+		it("should return false for an invalid AND filter with non-array value", function () {
 			const filter = {AND: {sections_avg: 91}};
 			expect(filterValidator.validateFilter(filter)).to.be.false;
 		});
@@ -126,7 +113,7 @@ describe("test suite for filter validator", function () {
 			expect(filterValidator.validateFilter(filter)).to.be.false;
 		});
 		it("should return false for an invalid AND filter with one array value", function () {
-			const filter = {AND: [{GT:{sections_avg:92}}]};
+			const filter = {AND: [{GT: {sections_avg: 92}}]};
 			expect(filterValidator.validateFilter(filter)).to.be.false;
 		});
 		it("should return false for an invalid OR filter with one array value", function () {
@@ -138,20 +125,20 @@ describe("test suite for filter validator", function () {
 		it("should return true for a valid NOT filter", function () {
 			const filer = {
 				NOT: {
-					GT: {sections_avg: 65}
-				}
+					GT: {sections_avg: 65},
+				},
 			};
 			expect(filterValidator.validateFilter(filer)).to.be.true;
 		});
 		it("should return false for a NOT filter with NO filters", function () {
 			const filter = {
-				NOT: {}
+				NOT: {},
 			};
 			expect(filterValidator.validateFilter(filter)).to.be.false;
 		});
-		it ("should return false if there is an issue with the filter itself for NOT", function () {
+		it("should return false if there is an issue with the filter itself for NOT", function () {
 			const filter = {
-				NOT: {GT:{sections_avg: "invalidString"}}
+				NOT: {GT: {sections_avg: "invalidString"}},
 			};
 			expect(filterValidator.validateFilter(filter)).to.be.false;
 		});
