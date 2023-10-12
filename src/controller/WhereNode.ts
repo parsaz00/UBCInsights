@@ -18,6 +18,7 @@ export class WhereNode {
 	 * @param dataSetID
 	 */
 	constructor(whereClause: any, dataSetID: string) {
+
 		if (typeof whereClause !== "object" || whereClause === null) {
 			throw new InsightError("WHERE clause must be a valid JSON object, and it is currently not");
 		}
@@ -27,7 +28,7 @@ export class WhereNode {
 		} else {
 			this.filter = whereClause;
 		}
-		this.dataSetID = dataSetID; // Initialize the dataSetID member
+		this.dataSetID = dataSetID;
 		this.filterValidator = new FilterValidator(this.dataSetID); // Initialize the FilterValidator with the dataSetID
 	}
 
@@ -95,17 +96,16 @@ export class WhereNode {
 			default:
 				return [];
 		}
-		if (filteredResult.length > 5000) {
-			throw new ResultTooLargeError("More than 5000 results found");
-		}
 		return filteredResult;
 	}
 
+	// Citation: see lines 5-7, used GPT for help
 	private evaluateGT(filterValue: any, dataset: any[]) {
 		// First, we need to obtain both the field and the value of the GT filter
-		const field = Object.keys(filterValue)[0];
-		const value = filterValue[field];
+		const originalField = Object.keys(filterValue)[0];
 
+		const value = filterValue[originalField];
+		const field = this.removeDatasetIDPrefix(originalField);
 		// Filter the results
 		const filteredResults = dataset.filter((entry) => {
 			// Ensure the field exists in the entry and its value is greater than the specified value
@@ -113,37 +113,33 @@ export class WhereNode {
 		});
 		return filteredResults;
 	}
+	// Citation: see lines 5-7, used GPT for help
 	private evaluateLT(filterValue: any, dataset: any[]) {
-		// First, we need to obtain both the field and the value of the GT filter
-		const field = Object.keys(filterValue)[0];
-		const value = filterValue[field];
-
-		// Filter the results
+		const originalField = Object.keys(filterValue)[0];
+		const value = filterValue[originalField];
+		const field = this.removeDatasetIDPrefix(originalField);
 		const filteredResults = dataset.filter((entry) => {
-			// Ensure the field exists in the entry and its value is greater than the specified value
 			return Object.prototype.hasOwnProperty.call(entry, field) && entry[field] < value;
 		});
-
 		return filteredResults;
 	}
 
+	// Citation: see lines 5-7, used GPT for help
 	private evaluateEQ(filterValue: any, dataset: any[]) {
-		// First, we need to obtain both the field and the value of the GT filter
-		const field = Object.keys(filterValue)[0];
-		const value = filterValue[field];
-
-		// Filter the results
+		const originalField = Object.keys(filterValue)[0];
+		const value = filterValue[originalField];
+		const field = this.removeDatasetIDPrefix(originalField);
 		const filteredResults = dataset.filter((entry) => {
-			// Ensure the field exists in the entry and its value is greater than the specified value
 			return Object.prototype.hasOwnProperty.call(entry, field) && entry[field] === value;
 		});
-
 		return filteredResults;
 	}
 
+	// Citation: see lines 5-7, used GPT for help
 	private evaluateIS(filterValue: any, dataset: any[]) {
-		const field = Object.keys(filterValue)[0];
-		const value = filterValue[field];
+		const originalField = Object.keys(filterValue)[0];
+		const value = filterValue[originalField];
+		const field = this.removeDatasetIDPrefix(originalField);
 
 		// First let's check wildcards
 		const startsWithWildCard = value.startsWith("*");
@@ -227,6 +223,9 @@ export class WhereNode {
 	 * Let's iterate over all the dataset, store everything that matches the filter, iterate over the dataset again
 	 * and add everything that isn't in the filteredResult
 	 */
+	// Citation: GPT suggested filtering without the negation, ie, storing all the entries that violate the negation,
+	// 			 then going through the entries again and only including those that were not in filteredResults as those
+	//			 don't violate the negate.
 	private evaluateNOT(filterValue: any, dataset: any[]) {
 		const whereNode = new WhereNode(filterValue, this.dataSetID);
 		const filteredResults = whereNode.evaluate(dataset);
@@ -237,5 +236,8 @@ export class WhereNode {
 			}
 		}
 		return notFilteredResults;
+	}
+	private removeDatasetIDPrefix(field: string): string {
+		return field.split("_")[1];
 	}
 }

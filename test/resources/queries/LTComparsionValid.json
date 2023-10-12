@@ -16,8 +16,6 @@
 	},
 	"errorExpected": false,
 	"expected": [
-		{
-			"result": [
 				{
 					"sections_dept": "frst",
 					"sections_avg": 0
@@ -6911,6 +6909,4 @@
 					"sections_avg": 64.99
 				}
 			]
-		}
-	]
 }

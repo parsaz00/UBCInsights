@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {FilterValidator} from "../../src/controller/FilterValidator";
+import {FilterValidator} from "../src/controller/FilterValidator";
 
 describe("test suite for filter validator", function () {
 	const datasetID = "sections";

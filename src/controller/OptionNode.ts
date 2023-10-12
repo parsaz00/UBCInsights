@@ -32,12 +32,14 @@ export class OptionNode {
 		// Check first if all fields in COLUMN are valid
 		for (let field of this.columns) {
 			if (!this.isValidField(field)) {
+				console.log("first if statement for NOT negation filter OPTION: returning false");
 				return false;
 			}
 		}
 		// ORDER has to be a string and it has to exists in COLUMNS
 		if (this.order !== null) {
 			if (typeof this.order !== "string" || !this.columns.includes(this.order)) {
+				console.log("second if statement for NOT negation filter OPTION: returning false");
 				return false;
 			}
 		}
@@ -50,19 +52,23 @@ export class OptionNode {
 	 * @param dataset the dataset to organize
 	 * @return any[] the organized dataset
 	 */
+	// Used ChatGPT for help with this method. Asked it to suggest methods that allow me to check if COLUMNS has correct
+	// fields, and it suggested using Object.prototype.hasOwnProperty.call() method
 
 	public evaluate(dataset: any[]): any[] {
 		let results = dataset.map((entry) => {
 			let filteredEntry: any = {};
 			for (let column of this.columns) {
-				if (Object.prototype.hasOwnProperty.call(entry, column)) {
-					filteredEntry[column] = entry[column];
+				const columnWithoutPrefix = this.removeDatasetIDPrefix(column);
+				if (Object.prototype.hasOwnProperty.call(entry, columnWithoutPrefix)) {
+					filteredEntry[column] = entry[columnWithoutPrefix];
 				}
 			}
 			return filteredEntry;
 		});
 
 		// Now we can order the results:
+		// Used ChatGPT to learn how the sort function works and it also suggested using localeCompare
 		if (this.order) {
 			results.sort((a, b) => {
 				// Using type assertion to ensure TypeScript knows the type
@@ -83,5 +89,8 @@ export class OptionNode {
 		const validSuffixes = ["uuid", "id", "title", "instructor", "dept", "year", "avg", "pass", "fail", "audit"];
 		const validFields = validSuffixes.map((suffix) => `${this.dataSetID}_${suffix}`);
 		return validFields.includes(field);
+	}
+	private removeDatasetIDPrefix(field: string): string {
+		return field.split("_")[1];
 	}
 }

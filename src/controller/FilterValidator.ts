@@ -33,13 +33,13 @@ export class FilterValidator {
 			case "OR":
 				return this.validateLComparator(filter[key]);
 			case "GT":
-				return this.validateMComparator(filter[key]);
+				return this.validateMComparator(filter);
 			case "LT":
-				return this.validateMComparator(filter[key]);
+				return this.validateMComparator(filter);
 			case "EQ":
-				return this.validateMComparator(filter[key]);
+				return this.validateMComparator(filter);
 			case "IS":
-				return this.validateSComparator(filter[key]);
+				return this.validateSComparator(filter);
 			case "NOT":
 				return this.validateNegation(filter[key]);
 			default:
@@ -69,19 +69,23 @@ export class FilterValidator {
 	}
 
 	// Validate MCOMPARATOR (GT, LT, EQ)
+	// Citation: Used chat GPT to create innerFilter part so that MComparator works with Negation
+	//           GPT suggested this fix, and I followed it
 	private validateMComparator(filter: any): boolean {
 		// CHECK if the filter is a valid object and not null
-		if (typeof filter !== "object" || filter === null) {
+		const comparatorKey = Object.keys(filter)[0];
+		const innerFilter = filter[comparatorKey];
+		if (typeof innerFilter !== "object" || innerFilter === null) {
 			return false;
 		}
 		// Check if the filter has EXACTLY one key-pair value
-		const keys = Object.keys(filter);
+		const keys = Object.keys(innerFilter);
 		if (keys.length !== 1) {
 			return false;
 		}
 
 		const key = keys[0];
-		const value = filter[key];
+		const value = innerFilter[key];
 
 		// Check if the key is a valid field
 		// Will likely update based on Zach implementation
@@ -96,6 +100,7 @@ export class FilterValidator {
 		return true;
 	}
 	// FIRST PART BEFORE underscore is dynamic
+	// Citation: Used ChatGPT to figure out how to write the syntax for map (`${this.dataSetID}_${suffix}`)
 	private isValidField(field: string): boolean {
 		const validSuffixes = ["uuid", "id", "title", "instructor", "dept", "year", "avg", "pass", "fail", "audit"];
 		const validFields = validSuffixes.map((suffix) => `${this.dataSetID}_${suffix}`);
@@ -103,27 +108,35 @@ export class FilterValidator {
 	}
 
 	// Validate SCOMPARATOR (IS)
+	// Citation: same as MComparator, used ChatGPT to get help on dealing with SComparator when it is in NOT filter,
+	// 			 and it suggested the using this arrangement with innerFilter
 	private validateSComparator(filter: any): boolean {
+		const comparatorKey = Object.keys(filter)[0];
+		const innerFilter = filter[comparatorKey];
 		// Check if the filter is an object and not null, if either is false, return false
-		if (typeof filter !== "object" || filter === null) {
+		if (typeof innerFilter !== "object" || innerFilter === null) {
 			return false;
 		}
 		// Check if the filter has EXACTLY one key-pair value
-		const keys = Object.keys(filter);
+		const keys = Object.keys(innerFilter);
 		if (keys.length !== 1) {
 			return false;
 		}
 		const key = keys[0];
-		const value = filter[key];
+		const value = innerFilter[key];
 
 		// Check if the key is a valid field
-		// Will likely update based on Zach implementation
 		if (!this.isValidField(key)) {
 			return false;
 		}
 
 		// Check if typeof value is a string
 		if (typeof value !== "string") {
+			return false;
+		}
+
+		// Check if value is empty string
+		if (value === "") {
 			return false;
 		}
 
@@ -135,6 +148,8 @@ export class FilterValidator {
 	}
 
 	// Validate NEGATION (NOT)
+	// Citation: same as MComparator, used ChatGPT to get help on dealing with validNegation,
+	// 			 and it suggested the using this arrangement with innerFilter
 	private validateNegation(filter: any): boolean {
 		if (typeof filter !== "object" || filter === null) {
 			return false;
@@ -145,7 +160,10 @@ export class FilterValidator {
 			return false;
 		}
 		// Validate the inner filter
-		return this.validateFilter(filter);
+		const innerFilterKey = keys[0];
+		const innerFilterValue = filter[innerFilterKey];
+		const fullFilter = {[innerFilterKey]: innerFilterValue};
+		return this.validateFilter(fullFilter);
 	}
 
 	private isValidWildCard(value: string) {

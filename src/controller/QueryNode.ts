@@ -1,6 +1,7 @@
 import {InsightError, InsightResult} from "./IInsightFacade";
 import {WhereNode} from "./WhereNode";
 import {OptionNode} from "./OptionNode";
+import {DataSet} from "./DataSet";
 
 /**
  * High level represents of a query
@@ -46,8 +47,8 @@ export class QueryNode {
 	 * the optionNode
 	 */
 
-	public evaluate(dataset: any[]): InsightResult[] {
-		const filteredResults = this.whereNode.evaluate(dataset);
+	public evaluate(dataset: DataSet): InsightResult[] {
+		const filteredResults = this.whereNode.evaluate(dataset.section);
 		return this.optionNode.evaluate(filteredResults);
 	}
 }

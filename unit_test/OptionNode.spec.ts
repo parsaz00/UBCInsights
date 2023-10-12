@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import "chai-as-promised";
-import {InsightError} from "../../src/controller/IInsightFacade";
-import {OptionNode} from "../../src/controller/OptionNode";
+import {InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade";
+import {OptionNode} from "../src/controller/OptionNode";
+import {DataSet, Section} from "../src/controller/DataSet";
 
 describe("Test suite for the OptionNode class", function () {
 	describe("Constructor Tests for OptionNode", function () {
@@ -44,6 +45,19 @@ describe("Test suite for the OptionNode class", function () {
 			const optionNode = new OptionNode(option, "sections");
 			expect(optionNode.validate()).to.be.true;
 		});
+		it("should return true for the following: ", function () {
+			const option = {
+				COLUMNS: [
+					"sections_dept",
+					"sections_id",
+					"sections_avg"
+				],
+				ORDER: "sections_avg"
+			};
+			const tempNode = new OptionNode(option, "sections");
+			const result = tempNode.validate();
+			expect(result).to.be.true;
+		});
 		it("should return false if the COLUMNS contains fields that are NOT present in the dataset", function () {
 			const option = {COLUMNS: ["sections_avg", "invalid_field"]};
 			const optionNode = new OptionNode(option, "sections");
@@ -69,32 +83,133 @@ describe("Test suite for the OptionNode class", function () {
 
 	describe("tests for OptionNode evaluate method", function () {
 		it("should return dataset as is (in OG form) when only COLUMNS is provided", function () {
-			const mockDataSet = [
-				{sections_avg: 85, sections_dept: "math"},
-				{sections_avg: 95, sections_dept: "cpsc"},
-				{sections_avg: 75, sections_dept: "bio"},
+			const dataset: Section[] = [
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "math",
+					year: 2021,
+					avg: 85,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				},
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "cpsc",
+					year: 2021,
+					avg: 95,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				},
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "bio",
+					year: 2021,
+					avg: 75,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				}
 			];
+			const datasetObject: DataSet = {
+				id: "sections",
+				section: dataset,
+				kind: InsightDatasetKind.Sections,
+				numRows: dataset.length
+			};
 			const option = {COLUMNS: ["sections_avg", "sections_dept"]};
 			const optionNode = new OptionNode(option, "sections");
-			const result = optionNode.evaluate(mockDataSet);
-			expect(result).to.deep.equal(mockDataSet);
+			const result = optionNode.evaluate(dataset);
+			const expected = [
+				{
+					sections_avg: 85,
+					sections_dept: "math"
+				},
+				{
+					sections_avg: 95,
+					sections_dept: "cpsc"
+				},
+				{
+					sections_avg: 75,
+					sections_dept: "bio"
+				}
+			];
+			expect(result).to.deep.equal(expected);
 		});
 		it("should return dataset organized by order when COLUMNS and ORDER is provided", function () {
-			const mockDataSet = [
-				{sections_avg: 85, sections_dept: "math"},
-				{sections_avg: 95, sections_dept: "cpsc"},
-				{sections_avg: 75, sections_dept: "bio"},
+			const dataset: Section[] = [
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "math",
+					year: 2021,
+					avg: 85,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				},
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "cpsc",
+					year: 2021,
+					avg: 95,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				},
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "bio",
+					year: 2021,
+					avg: 75,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				}
 			];
+			const datasetObject: DataSet = {
+				id: "sections",
+				section: dataset,
+				kind: InsightDatasetKind.Sections,
+				numRows: dataset.length
+			};
 			const option = {
 				COLUMNS: ["sections_avg", "sections_dept"],
 				ORDER: "sections_avg",
 			};
 			const optionNode = new OptionNode(option, "sections");
-			const result = optionNode.evaluate(mockDataSet);
+			const result = optionNode.evaluate(dataset);
 			const expected = [
-				{sections_avg: 75, sections_dept: "bio"},
-				{sections_avg: 85, sections_dept: "math"},
-				{sections_avg: 95, sections_dept: "cpsc"},
+				{
+					sections_avg: 75,
+					sections_dept: "bio"
+				},
+				{
+					sections_avg: 85,
+					sections_dept: "math"
+				},
+				{
+					sections_avg: 95,
+					sections_dept: "cpsc"
+				}
 			];
 			expect(result).to.deep.equal(expected);
 		});
@@ -109,14 +224,53 @@ describe("Test suite for the OptionNode class", function () {
 			expect(result).to.deep.equal([]);
 		});
 		it("should correctly sort the dataset if there are duplicate values for the ORDER field", function () {
-			const mockDataSet = [
-				{sections_avg: 85, sections_dept: "math"},
-				{sections_avg: 85, sections_dept: "cpsc"},
-				{sections_avg: 75, sections_dept: "bio"},
+			const dataset: Section[] = [
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "math",
+					year: 2021,
+					avg: 85,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				},
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "cpsc",
+					year: 2021,
+					avg: 85,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				},
+				{
+					uuid: "someUUID1",
+					id: "someID1",
+					title: "someTitle1",
+					instructor: "someInstructor1",
+					dept: "bio",
+					year: 2021,
+					avg: 75,
+					pass: 90,
+					fail: 5,
+					audit: 0
+				}
 			];
+			const datasetObject: DataSet = {
+				id: "sections",
+				section: dataset,
+				kind: InsightDatasetKind.Sections,
+				numRows: dataset.length
+			};
 			const option = {COLUMNS: ["sections_avg", "sections_dept"], ORDER: "sections_avg"};
 			const optionNode = new OptionNode(option, "sections");
-			const result = optionNode.evaluate(mockDataSet);
+			const result = optionNode.evaluate(dataset);
 			expect(result).to.deep.equal([
 				{sections_avg: 75, sections_dept: "bio"},
 				{sections_avg: 85, sections_dept: "math"},
