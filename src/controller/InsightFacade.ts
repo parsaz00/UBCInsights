@@ -1,3 +1,7 @@
+// Citation: Used ChatGPT for suggestions on to why previous commit had timeout issues. Pointed out that we were
+// 			 unnecessarily writing to disk twice, and so, we changed unzipZipFileFromString and processFromFile. It
+// 			 suggested using a datastructure to hold the unzipped data from processing, so we could process from memory
+// 			 as such, we decided to use a map to store unzipped data, process it, then store it disk to speed up the process
 import {
 	IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, NotFoundError, ResultTooLargeError,
 } from "./IInsightFacade";
@@ -6,7 +10,7 @@ import * as fs from "fs-extra";
 import JSZip from "jszip";
 import {QueryNode} from "./QueryNode";
 const zipFolder = "./project_team127/test/resources/archives";
-const outputFolder = "./output_data";
+const outputFolder = "./data";
 const dataSetFolder = "./data";
 const folderName = "courses";
 /**
@@ -52,13 +56,8 @@ export default class InsightFacade implements IInsightFacade {
 		let tempDataSet: DataSet = new DataSet(id, [], kind, 0);
 		const decodedBuffer = Buffer.from(content, "base64");
 		const decodedString = decodedBuffer.toString("binary");
-		await unzipZipFileFromString(decodedString, outputFolder).catch((error) => {
-			console.error("Error unzipping files:", error);
-			return Promise.reject(new InsightError("Invalid content"));
-		});
-		const coursePath = outputFolder + "/" + folderName;
-		console.log("The course path constructed is: ", coursePath);
-		await processFiles(outputFolder, Schema, tempDataSet);
+		const fileContents = await unzipZipFileFromString(decodedString);
+		await processFiles(fileContents, Schema, tempDataSet);
 		this.datasetmap.map.set(id, tempDataSet);
 		const keysIterator = this.datasetmap.map.keys();
 		let keysArray = Array.from(keysIterator);
@@ -190,27 +189,23 @@ function isNotEmptyOrWhitespace(input: string): boolean {
 	return regex.test(input);
 }
 // Citation: function below generated with help of ChatGPT
-async function unzipZipFileFromString(zipFileContent: string, outputF: string): Promise<void> {
-	try {
-		await fs.ensureDir(outputF + "/courses");
-		const jszip = new JSZip();
-		const zip = await jszip.loadAsync(zipFileContent);
-		await fs.ensureDir(outputF);
-		await Promise.all(
-			Object.keys(zip.files).map(async (fileName) => {
-				if (zip.files[fileName].dir) {
-					return; // Skip directories
-				}
-				const fileData = await zip.files[fileName].async("nodebuffer");
-				const outputPath = outputF + "/" + fileName;
-				await fs.writeFile(outputPath, fileData);
-			})
-		);
-		console.log("ZIP file extraction completed.");
-	} catch (error) {
-		console.error("ZIP file extraction failed:", error);
-	}
+async function unzipZipFileFromString(zipFileContent: string): Promise<Map<string, string>> {
+	const fileContents = new Map<string, string>();
+	const jszip = new JSZip();
+	const zip = await jszip.loadAsync(zipFileContent);
+
+	await Promise.all(
+		Object.keys(zip.files).map(async (fileName) => {
+			if (!zip.files[fileName].dir) {
+				const fileData = await zip.files[fileName].async("string");
+				fileContents.set(fileName, fileData);
+			}
+		})
+	);
+
+	return fileContents;
 }
+
 // Citation: function below generated with help of ChatGPT
 function validateAgainstSchema(jsonData: any, schema: any): boolean {
 	const {properties, required} = schema;
@@ -236,46 +231,32 @@ function identifierSwitch(obj: any): Section {
 		obj.Pass || 0, obj.Fail || 0, obj.Audit || 0);
 }
 // Citation: function below generated with help of ChatGPT
-async function processFiles(coursePath: string, schema: any, dataset: DataSet) {
-	try {
-		const files = await fs.readdir(coursePath);
-		await Promise.all(
-			files.map(async (file) => {
-				const filePath = `${coursePath}/${file}`;
-				const stats = await fs.stat(filePath);
-				if (stats.isDirectory()) {
-					return processFiles(filePath, schema, dataset);
-				}
-				try {
-					const data = await fs.readFile(filePath, "utf8");
-					const jsonArray = global.JSON.parse(data);
-					if (Array.isArray(jsonArray.result)) {
-						// console.log(`Processing ${jsonArray.result.length} entries from file ${file}`);
-						jsonArray.result.forEach((jsonObject: any) => {
-							const isValid = validateAgainstSchema(jsonObject, schema);
-							if (isValid) {
-								const section = new TempSection(jsonObject.id, jsonObject.Course,
-									jsonObject.Title, jsonObject.Professor, jsonObject.Subject, jsonObject.Year,
-									jsonObject.Avg, jsonObject.Pass, jsonObject.Fail, jsonObject.Audit);
-								const updatedSection = identifierSwitch(section);
-								dataset.section.push(updatedSection);
-							} else {
-								console.error(`JSON data in file ${file} is not valid. Skipping invalid entry.`);
-							}
-						});
+async function processFiles(fileContents: Map<string, string>, schema: any, dataset: DataSet) {
+	for (const [fileName, data] of fileContents.entries()) {
+		try {
+			const jsonArray = global.JSON.parse(data);
+			if (Array.isArray(jsonArray.result)) {
+				jsonArray.result.forEach((jsonObject: any) => {
+					const isValid = validateAgainstSchema(jsonObject, schema);
+					if (isValid) {
+						const section = new TempSection(jsonObject.id, jsonObject.Course,
+							jsonObject.Title, jsonObject.Professor, jsonObject.Subject, jsonObject.Year,
+							jsonObject.Avg, jsonObject.Pass, jsonObject.Fail, jsonObject.Audit);
+						const updatedSection = identifierSwitch(section);
+						dataset.section.push(updatedSection);
 					} else {
-						console.error(`JSON data in file ${file} is not an array. Skipping file.`);
+						console.error(`JSON data in file ${fileName} is not valid. Skipping invalid entry.`);
 					}
-				} catch (error) {
-					console.error(`Error processing JSON file ${file}:`, error);
-				}
-			})
-		);
-	} catch (error) {
-		console.error("Error in processFiles:", error);
-		throw new InsightError("Invalid reading directory: " + error);
+				});
+			} else {
+				console.error(`JSON data in file ${fileName} is not an array. Skipping file.`);
+			}
+		} catch (error) {
+			console.error(`Error processing JSON file ${fileName}:`, error);
+		}
 	}
 }
+
 // Citation: function below generated with help of ChatGPT
 async function writeToJsonFile(filePath: string, data: string) {
 	try {
