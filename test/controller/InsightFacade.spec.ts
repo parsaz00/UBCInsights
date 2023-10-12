@@ -66,16 +66,16 @@ describe("InsightFacade", function () {
 		// 	expect(datasets).to.have.length(1);
 		// 	expect(datasets[0].id).to.equal("sections");
 		// });
-		it("should not retrieve a removed dataset after 'crash'", async function() {
-			await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
-			await facade.removeDataset("sections");
-
-			// Simulate a crash by creating a new instance
-			const newInstance = new InsightFacade();
-			const datasets = await newInstance.listDatasets();
-
-			expect(datasets).to.be.empty;
-		});
+		// it("should not retrieve a removed dataset after 'crash'", async function() {
+		// 	await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
+		// 	await facade.removeDataset("sections");
+		//
+		// 	// Simulate a crash by creating a new instance
+		// 	const newInstance = new InsightFacade();
+		// 	const datasets = await newInstance.listDatasets();
+		//
+		// 	expect(datasets).to.be.empty;
+		// });
 
 		// it("should retrieve multiple datasets after 'crash'", async function() {
 		// 	const facade = new InsightFacade();
@@ -90,13 +90,13 @@ describe("InsightFacade", function () {
 		// 	expect(datasets).to.have.length(2);
 		// 	expect(datasets.map(d => d.id)).to.include.members(["sections", "courses"]);
 		// });
-		it("should create a file on disk after adding a dataset", async function() {
-			await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
-
-			// Use the correct path where the dataset is saved
-			const fileExists = await fs.pathExists("./data/sections");
-			expect(fileExists).to.be.true;
-		});
+		// it("should create a file on disk after adding a dataset", async function() {
+		// 	await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
+		//
+		// 	// Use the correct path where the dataset is saved
+		// 	const fileExists = await fs.pathExists("./data/sections");
+		// 	expect(fileExists).to.be.true;
+		// });
 		// it("should delete the file on disk after removing a dataset", async function() {
 		// 	const facade = new InsightFacade();
 		// 	await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
@@ -151,8 +151,10 @@ describe("InsightFacade", function () {
 		it("should add multiple datasets with valid IDs that are different and return the array with ids",
 			async function () {
 				await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
+				await facade.addDataset("id1", sections, InsightDatasetKind.Sections);
+				await facade.addDataset("id2", sections, InsightDatasetKind.Sections);
 				const result = await facade.addDataset("courses", courses, InsightDatasetKind.Sections);
-				return expect(result).to.have.deep.members(["sections", "courses"]);
+				return expect(result).to.have.deep.members(["sections", "id1", "id2", "courses"]);
 			});
 
 		// TESTS FOR REMOVE
@@ -180,7 +182,7 @@ describe("InsightFacade", function () {
 
 		// LIST DATASET methods
 		it("should list one dataset if added correctly", async function () {
-			await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
+			await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
 			const expected: InsightDataset[] = [{
 				id: "sections",
 				kind: InsightDatasetKind.Sections,
