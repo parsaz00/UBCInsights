@@ -2,45 +2,52 @@
 // 			 unnecessarily writing to disk twice, and so, we changed unzipZipFileFromString and processFromFile. It
 // 			 suggested using a datastructure to hold the unzipped data from processing, so we could process from memory
 // 			 as such, we decided to use a map to store unzipped data, process it, then store it disk to speed up the process
-import {
-	IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, NotFoundError, ResultTooLargeError,
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, NotFoundError,
+	ResultTooLargeError,
 } from "./IInsightFacade";
 import {DataSet, DataSetManager, DatasetSection, TempSection} from "./DataSet";
 import * as fs from "fs-extra";
 import JSZip from "jszip";
 import {QueryNode} from "./QueryNode";
-import JSON = Mocha.reporters.JSON;
-const zipFolder = "./project_team127/test/resources/archives";
-const outputFolder = "./data";
 const dataSetFolder = "./data";
-const folderName = "courses";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
  */
 const Schema = {
 	type: "object",
-	properties: {
-		id: {type: "number"},
-		Course: {type: "string"},
-		Title: {type: "string"},
-		Professor: {type: "string"},
-		Subject: {type: "string"},
-		Year: {type: "string"},
-		Avg: {type: "number"},
-		Pass: {type: "number"},
-		Fail: {type: "number"},
-		Audit: {type: "number"},
-	},
+	properties: {id: {type: "number"}, Course: {type: "string"}, Title: {type: "string"}, Professor: {type: "string"},
+		Subject: {type: "string"}, Year: {type: "string"}, Avg: {type: "number"}, Pass: {type: "number"},
+		Fail: {type: "number"}, Audit: {type: "number"},},
 	required: ["id", "Course", "Title", "Professor", "Subject", "Year", "Avg", "Pass", "Fail", "Audit"],
 };
 export default class InsightFacade implements IInsightFacade {
 	private datasetmap = new DataSetManager();
+	private datasetsLoaded: boolean = false; // see citation for ensureDatasetsLoaded
 	constructor() {
 		console.log("InsightFacadeImpl::init()");
 	}
-	// Citation:
+	// citation: Used GPT to get idea for this approach. suggested using a method in tandem with a boolean member
+	// 			 to ensure that datasets are loaded before any method is called
+	private ensureDatasetsLoaded(): void {
+		if (!this.datasetsLoaded) {
+			try {
+				fs.ensureDirSync(dataSetFolder);
+				const files = fs.readdirSync(dataSetFolder);
+				for (const file of files) {
+					const filePath = `${dataSetFolder}/${file}`;
+					const data = fs.readFileSync(filePath, "utf8");
+					const dataset: DataSet = global.JSON.parse(data);
+					this.datasetmap.map.set(dataset.id, dataset);
+				}
+				this.datasetsLoaded = true;
+			} catch (error) {
+				console.error("Error loading datasets from disk:", error);
+			}
+		}
+	}
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+		this.ensureDatasetsLoaded();
 		if (!isNotEmptyOrWhitespace(id)) {
 			return Promise.reject(new InsightError("ID cannot be whitespace"));
 		}
@@ -67,8 +74,8 @@ export default class InsightFacade implements IInsightFacade {
 		tempDataSet.numRows = tempDataSet.section.length;
 		return Promise.resolve(keysArray);
 	}
-	// Citation:
 	public removeDataset(id: string): Promise<string> {
+		this.ensureDatasetsLoaded();
 		if (!isNotEmptyOrWhitespace(id)) {
 			return Promise.reject(new InsightError("Invalid id"));
 		}
@@ -90,6 +97,7 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.resolve(id);
 	}
 	public listDatasets(): Promise<InsightDataset[]> {
+		this.ensureDatasetsLoaded();
 		const insightDatasets: InsightDataset[] = Array.from(this.datasetmap.map.values()).map((dataset) => ({
 			id: dataset.id,
 			kind: dataset.kind, // Set the kind property
@@ -98,6 +106,7 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.resolve(insightDatasets);
 	}
 	public performQuery(query: unknown): Promise<InsightResult[]> {
+		this.ensureDatasetsLoaded();
 		// Step 1: Ensure that the query is an object
 		if (typeof query !== "object" || query === null) {
 			return Promise.reject(new InsightError("Query must be a valid object"));
@@ -175,7 +184,6 @@ export default class InsightFacade implements IInsightFacade {
 	private getDataSetID(query: any): string {
 		return this.extractDatasetIDFromQuery(query) || "";
 	}
-
 	private getDataset(dataSetID: string): DataSet {
 		const dataset = this.datasetmap.map.get(dataSetID);
 		if (!dataset) {
@@ -193,7 +201,6 @@ async function unzipZipFileFromString(zipFileContent: string): Promise<Map<strin
 	const fileContents = new Map<string, string>();
 	const jszip = new JSZip();
 	const zip = await jszip.loadAsync(zipFileContent);
-
 	await Promise.all(
 		Object.keys(zip.files).map(async (fileName) => {
 			if (!zip.files[fileName].dir) {
@@ -202,10 +209,8 @@ async function unzipZipFileFromString(zipFileContent: string): Promise<Map<strin
 			}
 		})
 	);
-
 	return fileContents;
 }
-
 // Citation: function below generated with help of ChatGPT
 function validateAgainstSchema(jsonData: any, schema: any): boolean {
 	const {properties, required} = schema;
@@ -233,8 +238,8 @@ function identifierSwitch(obj: any): DatasetSection {
 		year = Number(obj.Year);
 	}
 	return new DatasetSection(String(obj.id) || "", obj.Course || "", obj.Title || "",
-		obj.Professor || "", obj.Subject || "", year || 0, obj.Avg || 0,
-		obj.Pass || 0, obj.Fail || 0, obj.Audit || 0);
+		obj.Professor || "", obj.Subject || "", year || 0, obj.Avg || 0, obj.Pass || 0,
+		obj.Fail || 0, obj.Audit || 0);
 }
 // Citation: function below generated with help of ChatGPT
 async function processFiles(fileContents: Map<string, string>, schema: any, dataset: DataSet) {
@@ -245,9 +250,9 @@ async function processFiles(fileContents: Map<string, string>, schema: any, data
 				jsonArray.result.forEach((jsonObject: any) => {
 					const isValid = validateAgainstSchema(jsonObject, schema);
 					if (isValid) {
-						const section = new TempSection(jsonObject.id, jsonObject.Course,
-							jsonObject.Title, jsonObject.Professor, jsonObject.Subject, jsonObject.Year,
-							jsonObject.Avg, jsonObject.Pass, jsonObject.Fail, jsonObject.Audit, jsonObject.Section);
+						const section = new TempSection(jsonObject.id, jsonObject.Course, jsonObject.Title,
+							jsonObject.Professor, jsonObject.Subject, jsonObject.Year, jsonObject.Avg, jsonObject.Pass,
+							jsonObject.Fail, jsonObject.Audit, jsonObject.Section);
 						const updatedSection = identifierSwitch(section);
 						dataset.section.push(updatedSection);
 					} else {
@@ -262,7 +267,6 @@ async function processFiles(fileContents: Map<string, string>, schema: any, data
 		}
 	}
 }
-
 // Citation: function below generated with help of ChatGPT
 async function writeToJsonFile(filePath: string, data: string) {
 	try {

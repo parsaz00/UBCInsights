@@ -42,53 +42,52 @@ describe("test suit for WhereNode class", function () {
 			expect(whereNode.validate()).to.be.true;
 		});
 	});
-	describe("nested WhereNode tests for MComparators that are INVALID and validate function",
-		function () {
-			it("should reject a GT comparison that isn't a numeric value", function () {
-				const where = {GT: {courses_avg: "string"}};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
-			it("should reject a LT comparison that isn't a numeric value", function () {
-				const where = {LT: {courses_avg: "string"}};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
-			it("should reject a EQ comparison that isn't a numeric value", function () {
-				const where = {EQ: {courses_avg: "string"}};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
-			it("should reject a GT comparison with a missing key", function () {
-				const where = {GT: {}};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
-			it("should reject a LT comparison with a missing key", function () {
-				const where = {LT: {}};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
-			it("should reject a EQ comparison with a missing key", function () {
-				const where = {EQ: {}};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
-			it("should reject an MComparator with an INVALID MComparator", function () {
-				const where = {INVALID_MCOMPARATOR: {courses_avg: 97}};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
-			it("should reject an MComparator with an INVALID key", function () {
-				const where = {
-					EQ: {
-						invalid_key: 97,
-					},
-				};
-				const whereNode = new WhereNode(where, "courses");
-				expect(whereNode.validate()).to.be.false;
-			});
+	describe("nested WhereNode tests for MComparators that are INVALID and validate function", function () {
+		it("should reject a GT comparison that isn't a numeric value", function () {
+			const where = {GT: {courses_avg: "string"}};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
 		});
+		it("should reject a LT comparison that isn't a numeric value", function () {
+			const where = {LT: {courses_avg: "string"}};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
+		});
+		it("should reject a EQ comparison that isn't a numeric value", function () {
+			const where = {EQ: {courses_avg: "string"}};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
+		});
+		it("should reject a GT comparison with a missing key", function () {
+			const where = {GT: {}};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
+		});
+		it("should reject a LT comparison with a missing key", function () {
+			const where = {LT: {}};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
+		});
+		it("should reject a EQ comparison with a missing key", function () {
+			const where = {EQ: {}};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
+		});
+		it("should reject an MComparator with an INVALID MComparator", function () {
+			const where = {INVALID_MCOMPARATOR: {courses_avg: 97}};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
+		});
+		it("should reject an MComparator with an INVALID key", function () {
+			const where = {
+				EQ: {
+					invalid_key: 97,
+				},
+			};
+			const whereNode = new WhereNode(where, "courses");
+			expect(whereNode.validate()).to.be.false;
+		});
+	});
 	describe("nested WhereNode tests for LComparators and validate function", function () {
 		it("should return true for the validate function for a valid AND comparator", function () {
 			const where = {
@@ -154,8 +153,8 @@ describe("test suit for WhereNode class", function () {
 			const whereNode = new WhereNode(where, "courses");
 			expect(whereNode.validate()).to.be.true;
 		});
-		it ("should reject because there is an empty string for IS filter", function () {
-			const where =  {IS: {sections_dept: ""}};
+		it("should reject because there is an empty string for IS filter", function () {
+			const where = {IS: {sections_dept: ""}};
 			const whereNode = new WhereNode(where, "sections");
 			const result = whereNode.validate();
 			expect(result).to.be.false;
@@ -207,9 +206,9 @@ describe("test suit for WhereNode class", function () {
 			const where = {
 				NOT: {
 					GT: {
-						sections_avg: 61
-					}
-				}
+						sections_avg: 61,
+					},
+				},
 			};
 			const whereNode = new WhereNode(where, "sections");
 			const result = whereNode.validate();
@@ -287,7 +286,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -299,7 +298,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -311,8 +310,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			GT: {courses_avg: 90},
@@ -334,7 +333,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -346,7 +345,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -358,8 +357,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			LT: {
@@ -382,7 +381,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -394,7 +393,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -406,8 +405,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			GT: {
@@ -430,7 +429,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -442,7 +441,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -454,8 +453,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			EQ: {
@@ -478,7 +477,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -490,7 +489,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -502,8 +501,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			IS: {
@@ -526,7 +525,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -538,7 +537,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -550,8 +549,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			IS: {
@@ -562,55 +561,54 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		const result = whereNode.evaluate(dataset);
 		expect(result).to.have.lengthOf(1);
 	});
-	it("should filter and return the math course based on *s wildcard, as the instructors name ends with s"
-		, function () {
-			const dataset: DatasetSection[] = [
-				{
-					uuid: "someUUID1",
-					id: "someID1",
-					title: "someTitle1",
-					instructor: "someInstructor1",
-					dept: "math",
-					year: 2021,
-					avg: 85,
-					pass: 90,
-					fail: 5,
-					audit: 0
-				},
-				{
-					uuid: "someUUID1",
-					id: "someID1",
-					title: "someTitle1",
-					instructor: "someInstructor1",
-					dept: "cpsc",
-					year: 2021,
-					avg: 95,
-					pass: 90,
-					fail: 5,
-					audit: 0
-				},
-				{
-					uuid: "someUUID1",
-					id: "someID1",
-					title: "someTitle1",
-					instructor: "someInstructor1s",
-					dept: "bio",
-					year: 2021,
-					avg: 75,
-					pass: 90,
-					fail: 5,
-					audit: 0
-				}
-			];
-			const where = {
-				IS: {
-					courses_instructor: "*s",
-				},
-			};
-			const whereNode = new WhereNode(where, "courses");
-			const result = whereNode.evaluate(dataset);
-			expect(result).to.have.lengthOf(1);
-		});
+	it("should filter and return the math course based on *s wildcard, as the instructors name ends with s", function () {
+		const dataset: DatasetSection[] = [
+			{
+				uuid: "someUUID1",
+				id: "someID1",
+				title: "someTitle1",
+				instructor: "someInstructor1",
+				dept: "math",
+				year: 2021,
+				avg: 85,
+				pass: 90,
+				fail: 5,
+				audit: 0,
+			},
+			{
+				uuid: "someUUID1",
+				id: "someID1",
+				title: "someTitle1",
+				instructor: "someInstructor1",
+				dept: "cpsc",
+				year: 2021,
+				avg: 95,
+				pass: 90,
+				fail: 5,
+				audit: 0,
+			},
+			{
+				uuid: "someUUID1",
+				id: "someID1",
+				title: "someTitle1",
+				instructor: "someInstructor1s",
+				dept: "bio",
+				year: 2021,
+				avg: 75,
+				pass: 90,
+				fail: 5,
+				audit: 0,
+			},
+		];
+		const where = {
+			IS: {
+				courses_instructor: "*s",
+			},
+		};
+		const whereNode = new WhereNode(where, "courses");
+		const result = whereNode.evaluate(dataset);
+		expect(result).to.have.lengthOf(1);
+	});
 	it(
 		"should filter and return the math and cpsc course based on *s* wildcard, " +
 			"as the instructors names contain an s",
@@ -626,7 +624,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 					avg: 85,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -638,7 +636,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 					avg: 95,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -650,8 +648,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 					avg: 75,
 					pass: 90,
 					fail: 5,
-					audit: 0
-				}
+					audit: 0,
+				},
 			];
 			const where = {
 				IS: {
@@ -676,7 +674,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -688,7 +686,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -700,8 +698,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			AND: [{GT: {courses_avg: 86}}, {IS: {courses_dept: "cpsc"}}],
@@ -722,7 +720,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -734,7 +732,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -746,8 +744,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			AND: [{GT: {courses_avg: 80}}, {IS: {courses_dept: "cpsc"}}],
@@ -756,53 +754,52 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		const result = whereNode.evaluate(dataset);
 		expect(result).to.lengthOf(1);
 	});
-	it("should filter and return only the math and cpwc course as it is in the cpsc dept or have avg above 84"
-		, function () {
-			const dataset: DatasetSection[] = [
-				{
-					uuid: "someUUID1",
-					id: "someID1",
-					title: "someTitle1",
-					instructor: "someInstructor1",
-					dept: "math",
-					year: 2021,
-					avg: 85,
-					pass: 90,
-					fail: 5,
-					audit: 0
-				},
-				{
-					uuid: "someUUID1",
-					id: "someID1",
-					title: "someTitle1",
-					instructor: "someInstructor1",
-					dept: "cpsc",
-					year: 2021,
-					avg: 95,
-					pass: 90,
-					fail: 5,
-					audit: 0
-				},
-				{
-					uuid: "someUUID1",
-					id: "someID1",
-					title: "someTitle1",
-					instructor: "someInstructor1",
-					dept: "bio",
-					year: 2021,
-					avg: 75,
-					pass: 90,
-					fail: 5,
-					audit: 0
-				}
-			];
-			const where = {
-				OR: [{GT: {courses_avg: 84}}, {IS: {courses_dept: "math"}}],
-			};
-			const whereNode = new WhereNode(where, "courses");
-			const result = whereNode.evaluate(dataset);
-			expect(result).to.lengthOf(2);
-		});
+	it("should filter and return only the math and cpwc course as it is in the cpsc dept or have avg above 84", function () {
+		const dataset: DatasetSection[] = [
+			{
+				uuid: "someUUID1",
+				id: "someID1",
+				title: "someTitle1",
+				instructor: "someInstructor1",
+				dept: "math",
+				year: 2021,
+				avg: 85,
+				pass: 90,
+				fail: 5,
+				audit: 0,
+			},
+			{
+				uuid: "someUUID1",
+				id: "someID1",
+				title: "someTitle1",
+				instructor: "someInstructor1",
+				dept: "cpsc",
+				year: 2021,
+				avg: 95,
+				pass: 90,
+				fail: 5,
+				audit: 0,
+			},
+			{
+				uuid: "someUUID1",
+				id: "someID1",
+				title: "someTitle1",
+				instructor: "someInstructor1",
+				dept: "bio",
+				year: 2021,
+				avg: 75,
+				pass: 90,
+				fail: 5,
+				audit: 0,
+			},
+		];
+		const where = {
+			OR: [{GT: {courses_avg: 84}}, {IS: {courses_dept: "math"}}],
+		};
+		const whereNode = new WhereNode(where, "courses");
+		const result = whereNode.evaluate(dataset);
+		expect(result).to.lengthOf(2);
+	});
 	it("should filter and return the math and bio course based on NOT comparison", function () {
 		const dataset: DatasetSection[] = [
 			{
@@ -815,7 +812,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -827,7 +824,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -839,8 +836,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			NOT: {
@@ -863,7 +860,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 85,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -875,7 +872,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 95,
 				pass: 90,
 				fail: 5,
-				audit: 0
+				audit: 0,
 			},
 			{
 				uuid: "someUUID1",
@@ -887,8 +884,8 @@ describe("Test suite for WhereNode class evaluate method", function () {
 				avg: 75,
 				pass: 90,
 				fail: 5,
-				audit: 0
-			}
+				audit: 0,
+			},
 		];
 		const where = {
 			NOT: {
@@ -899,5 +896,4 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		const result = whereNode.evaluate(dataset);
 		expect(result).to.have.lengthOf(0); // none of the options should be returned
 	});
-
 });
