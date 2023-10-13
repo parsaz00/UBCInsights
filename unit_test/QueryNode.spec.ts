@@ -126,13 +126,13 @@ describe("QueryNode unit tests and validation tests", function () {
 		const query = {
 			WHERE: {
 				GT: {
-					sections_avg: 90
-				}
+					sections_avg: 90,
+				},
 			},
 			OPTIONS: {
 				COLUMNS: ["sections_dept", "sections_avg"],
-				ORDER: "sections_avg"
-			}
+				ORDER: "sections_avg",
+			},
 		};
 		const dataset: DatasetSection[] = [
 			{
@@ -145,7 +145,7 @@ describe("QueryNode unit tests and validation tests", function () {
 				avg: 95,
 				pass: 90, // You can fill this with an appropriate value
 				fail: 5, // You can fill this with an appropriate value
-				audit: 0 // You can fill this with an appropriate value
+				audit: 0, // You can fill this with an appropriate value
 			},
 			{
 				uuid: "someUUID2", // You can fill this with an appropriate value
@@ -157,25 +157,24 @@ describe("QueryNode unit tests and validation tests", function () {
 				avg: 85,
 				pass: 80, // You can fill this with an appropriate value
 				fail: 5, // You can fill this with an appropriate value
-				audit: 0 // You can fill this with an appropriate value
-			}
+				audit: 0, // You can fill this with an appropriate value
+			},
 		];
 
 		const datasetObject: DataSet = {
 			id: "sections",
 			section: dataset,
 			kind: InsightDatasetKind.Sections,
-			numRows: dataset.length
+			numRows: dataset.length,
 		};
 		const expectedResults = [
 			{
 				sections_avg: 95,
-				sections_dept: "cpsc"
-			}
+				sections_dept: "cpsc",
+			},
 		];
 		const queryNode = new QueryNode(query, "sections");
 		const results = queryNode.evaluate(datasetObject);
 		expect(results).to.deep.equal(expectedResults);
 	});
-
 });
