@@ -2,7 +2,7 @@ import {expect} from "chai";
 import "chai-as-promised";
 import {InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade";
 import {QueryNode} from "../src/controller/QueryNode";
-import {DataSet, Section} from "../src/controller/DataSet";
+import {DataSet, DatasetSection} from "../src/controller/DataSet";
 
 describe("QueryNode unit tests and validation tests", function () {
 	it("should throw an InsightError if there is NO WHERE CLAUSE", function () {
@@ -134,7 +134,7 @@ describe("QueryNode unit tests and validation tests", function () {
 				ORDER: "sections_avg"
 			}
 		};
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1", // You can fill this with an appropriate value
 				id: "someID1", // You can fill this with an appropriate value
