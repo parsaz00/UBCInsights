@@ -47,12 +47,8 @@ describe("Test suite for the OptionNode class", function () {
 		});
 		it("should return true for the following: ", function () {
 			const option = {
-				COLUMNS: [
-					"sections_dept",
-					"sections_id",
-					"sections_avg"
-				],
-				ORDER: "sections_avg"
+				COLUMNS: ["sections_dept", "sections_id", "sections_avg"],
+				ORDER: "sections_avg",
 			};
 			const tempNode = new OptionNode(option, "sections");
 			const result = tempNode.validate();
@@ -94,7 +90,7 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 85,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -106,7 +102,7 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 95,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -118,14 +114,14 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 75,
 					pass: 90,
 					fail: 5,
-					audit: 0
-				}
+					audit: 0,
+				},
 			];
 			const datasetObject: DataSet = {
 				id: "sections",
 				section: dataset,
 				kind: InsightDatasetKind.Sections,
-				numRows: dataset.length
+				numRows: dataset.length,
 			};
 			const option = {COLUMNS: ["sections_avg", "sections_dept"]};
 			const optionNode = new OptionNode(option, "sections");
@@ -133,16 +129,16 @@ describe("Test suite for the OptionNode class", function () {
 			const expected = [
 				{
 					sections_avg: 85,
-					sections_dept: "math"
+					sections_dept: "math",
 				},
 				{
 					sections_avg: 95,
-					sections_dept: "cpsc"
+					sections_dept: "cpsc",
 				},
 				{
 					sections_avg: 75,
-					sections_dept: "bio"
-				}
+					sections_dept: "bio",
+				},
 			];
 			expect(result).to.deep.equal(expected);
 		});
@@ -158,7 +154,7 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 85,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -170,7 +166,7 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 95,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -182,14 +178,14 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 75,
 					pass: 90,
 					fail: 5,
-					audit: 0
-				}
+					audit: 0,
+				},
 			];
 			const datasetObject: DataSet = {
 				id: "sections",
 				section: dataset,
 				kind: InsightDatasetKind.Sections,
-				numRows: dataset.length
+				numRows: dataset.length,
 			};
 			const option = {
 				COLUMNS: ["sections_avg", "sections_dept"],
@@ -200,16 +196,16 @@ describe("Test suite for the OptionNode class", function () {
 			const expected = [
 				{
 					sections_avg: 75,
-					sections_dept: "bio"
+					sections_dept: "bio",
 				},
 				{
 					sections_avg: 85,
-					sections_dept: "math"
+					sections_dept: "math",
 				},
 				{
 					sections_avg: 95,
-					sections_dept: "cpsc"
-				}
+					sections_dept: "cpsc",
+				},
 			];
 			expect(result).to.deep.equal(expected);
 		});
@@ -235,7 +231,7 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 85,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -247,7 +243,7 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 85,
 					pass: 90,
 					fail: 5,
-					audit: 0
+					audit: 0,
 				},
 				{
 					uuid: "someUUID1",
@@ -259,14 +255,14 @@ describe("Test suite for the OptionNode class", function () {
 					avg: 75,
 					pass: 90,
 					fail: 5,
-					audit: 0
-				}
+					audit: 0,
+				},
 			];
 			const datasetObject: DataSet = {
 				id: "sections",
 				section: dataset,
 				kind: InsightDatasetKind.Sections,
-				numRows: dataset.length
+				numRows: dataset.length,
 			};
 			const option = {COLUMNS: ["sections_avg", "sections_dept"], ORDER: "sections_avg"};
 			const optionNode = new OptionNode(option, "sections");

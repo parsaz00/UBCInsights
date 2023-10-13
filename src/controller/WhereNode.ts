@@ -18,7 +18,6 @@ export class WhereNode {
 	 * @param dataSetID
 	 */
 	constructor(whereClause: any, dataSetID: string) {
-
 		if (typeof whereClause !== "object" || whereClause === null) {
 			throw new InsightError("WHERE clause must be a valid JSON object, and it is currently not");
 		}
