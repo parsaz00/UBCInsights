@@ -1,5 +1,5 @@
 {
-	"title": "invalidResult: empty string for IS",
+	"title": "Is empty string: no results",
 	"input": {
 		"WHERE": {
 			"IS": {
@@ -15,6 +15,6 @@
 			"ORDER": "sections_avg"
 		}
 	},
-	"errorExpected": true,
-	"expected": "InsightError"
+	"errorExpected": false,
+	"expected": []
 }

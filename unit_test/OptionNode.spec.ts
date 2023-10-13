@@ -2,7 +2,7 @@ import {expect} from "chai";
 import "chai-as-promised";
 import {InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade";
 import {OptionNode} from "../src/controller/OptionNode";
-import {DataSet, Section} from "../src/controller/DataSet";
+import {DataSet, DatasetSection} from "../src/controller/DataSet";
 
 describe("Test suite for the OptionNode class", function () {
 	describe("Constructor Tests for OptionNode", function () {
@@ -83,7 +83,7 @@ describe("Test suite for the OptionNode class", function () {
 
 	describe("tests for OptionNode evaluate method", function () {
 		it("should return dataset as is (in OG form) when only COLUMNS is provided", function () {
-			const dataset: Section[] = [
+			const dataset: DatasetSection[] = [
 				{
 					uuid: "someUUID1",
 					id: "someID1",
@@ -147,7 +147,7 @@ describe("Test suite for the OptionNode class", function () {
 			expect(result).to.deep.equal(expected);
 		});
 		it("should return dataset organized by order when COLUMNS and ORDER is provided", function () {
-			const dataset: Section[] = [
+			const dataset: DatasetSection[] = [
 				{
 					uuid: "someUUID1",
 					id: "someID1",
@@ -224,7 +224,7 @@ describe("Test suite for the OptionNode class", function () {
 			expect(result).to.deep.equal([]);
 		});
 		it("should correctly sort the dataset if there are duplicate values for the ORDER field", function () {
-			const dataset: Section[] = [
+			const dataset: DatasetSection[] = [
 				{
 					uuid: "someUUID1",
 					id: "someID1",

@@ -55,7 +55,7 @@ export class FilterValidator {
 		}
 
 		// The array needs to have a length of at least one
-		if (filters.length < 2) {
+		if (filters.length < 1) {
 			return false;
 		}
 
@@ -135,10 +135,10 @@ export class FilterValidator {
 			return false;
 		}
 
-		// Check if value is empty string
-		if (value === "") {
-			return false;
-		}
+		// // Check if value is empty string
+		// if (value === "") {
+		// 	return false;
+		// }
 
 		// Check wildcard constraint
 		if (!this.isValidWildCard(value)) {

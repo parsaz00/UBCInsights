@@ -140,7 +140,21 @@ describe("InsightFacade", function () {
 		// 	const result = facade.addDataset("sections", invalidZipWithoutCoursesDirBase64, InsightDatasetKind.Sections);
 		// 	return expect(result).to.eventually.be.rejectedWith(InsightError);
 		// });
+		it("should remove from disk", async function () {
+			await facade.addDataset("abcd", courses, InsightDatasetKind.Sections);
+			await facade.removeDataset("abcd");
+			return (!fs.existsSync("./data/abcd"));
+		});
+		it("should reject a duplicated ID", async function () {
+			await facade.addDataset("abcd", courses, InsightDatasetKind.Sections);
+			const result = facade.addDataset("abcd", sections, InsightDatasetKind.Sections);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
 
+		it("add should write to disk", async function () {
+			await facade.addDataset("abcd", courses, InsightDatasetKind.Sections);
+			return (fs.existsSync("./data/abcd"));
+		});
 
 		it("should accept a valid ID and return the array of ID's with the valid ID contained"
 			, async function () {
@@ -151,8 +165,8 @@ describe("InsightFacade", function () {
 		it("should add multiple datasets with valid IDs that are different and return the array with ids",
 			async function () {
 				await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
-				await facade.addDataset("id1", sections, InsightDatasetKind.Sections);
-				await facade.addDataset("id2", sections, InsightDatasetKind.Sections);
+				await facade.addDataset("id1", courses, InsightDatasetKind.Sections);
+				await facade.addDataset("id2", courses, InsightDatasetKind.Sections);
 				const result = await facade.addDataset("courses", courses, InsightDatasetKind.Sections);
 				return expect(result).to.have.deep.members(["sections", "id1", "id2", "courses"]);
 			});
