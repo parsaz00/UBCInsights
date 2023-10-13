@@ -2,11 +2,11 @@ import {InsightDatasetKind} from "./IInsightFacade";
 
 export class DataSet {
 	public id: string;
-	public section: Section[];
+	public section: DatasetSection[];
 	public kind: InsightDatasetKind;
 	public numRows: number;
 
-	constructor(datasetID: string, section: Section[], setkind: InsightDatasetKind, NoR: number) {
+	constructor(datasetID: string, section: DatasetSection[], setkind: InsightDatasetKind, NoR: number) {
 		this.id = datasetID;
 		this.section = section;
 		this.kind = setkind;
@@ -22,7 +22,7 @@ export class DataSetManager {
 	}
 }
 
-export class Section {
+export class DatasetSection {
 	public uuid: string;
 	public id: string;
 	public title: string;
@@ -70,6 +70,7 @@ export class TempSection {
 	public Pass: number;
 	public Fail: number;
 	public Audit: number;
+	public Section: string;
 
 	constructor(
 		id: string,
@@ -81,7 +82,8 @@ export class TempSection {
 		Avg: number,
 		Pass: number,
 		Fail: number,
-		Audit: number
+		Audit: number,
+		Section: string
 	) {
 		this.id = id;
 		this.Course = Course;
@@ -93,5 +95,6 @@ export class TempSection {
 		this.Pass = Pass;
 		this.Fail = Fail;
 		this.Audit = Audit;
+		this.Section = Section;
 	}
 }

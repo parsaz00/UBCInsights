@@ -5,10 +5,11 @@
 import {
 	IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, NotFoundError, ResultTooLargeError,
 } from "./IInsightFacade";
-import {DataSet, DataSetManager, Section, TempSection} from "./DataSet";
+import {DataSet, DataSetManager, DatasetSection, TempSection} from "./DataSet";
 import * as fs from "fs-extra";
 import JSZip from "jszip";
 import {QueryNode} from "./QueryNode";
+import JSON = Mocha.reporters.JSON;
 const zipFolder = "./project_team127/test/resources/archives";
 const outputFolder = "./data";
 const dataSetFolder = "./data";
@@ -35,7 +36,6 @@ const Schema = {
 };
 export default class InsightFacade implements IInsightFacade {
 	private datasetmap = new DataSetManager();
-
 	constructor() {
 		console.log("InsightFacadeImpl::init()");
 	}
@@ -225,9 +225,15 @@ function validateAgainstSchema(jsonData: any, schema: any): boolean {
 	return true; // Validation passed
 }
 // Citation:function below generated with help of ChatGPT
-function identifierSwitch(obj: any): Section {
-	return new Section(String(obj.id) || "", obj.Course || "", obj.Title || "",
-		obj.Professor || "", obj.Subject || "", Number(obj.Year) || 0, obj.Avg || 0,
+function identifierSwitch(obj: any): DatasetSection {
+	let year: number;
+	if (obj.Section === "overall") {
+		year = 1900;
+	} else {
+		year = Number(obj.Year);
+	}
+	return new DatasetSection(String(obj.id) || "", obj.Course || "", obj.Title || "",
+		obj.Professor || "", obj.Subject || "", year || 0, obj.Avg || 0,
 		obj.Pass || 0, obj.Fail || 0, obj.Audit || 0);
 }
 // Citation: function below generated with help of ChatGPT
@@ -241,7 +247,7 @@ async function processFiles(fileContents: Map<string, string>, schema: any, data
 					if (isValid) {
 						const section = new TempSection(jsonObject.id, jsonObject.Course,
 							jsonObject.Title, jsonObject.Professor, jsonObject.Subject, jsonObject.Year,
-							jsonObject.Avg, jsonObject.Pass, jsonObject.Fail, jsonObject.Audit);
+							jsonObject.Avg, jsonObject.Pass, jsonObject.Fail, jsonObject.Audit, jsonObject.Section);
 						const updatedSection = identifierSwitch(section);
 						dataset.section.push(updatedSection);
 					} else {
@@ -261,6 +267,8 @@ async function processFiles(fileContents: Map<string, string>, schema: any, data
 async function writeToJsonFile(filePath: string, data: string) {
 	try {
 		const dir = filePath.substring(0, filePath.lastIndexOf("/"));
+		console.log("dir in wrtieToJsonFile is: ", dir);
+		console.log("file path is:", filePath);
 		await fs.ensureDir(dir);
 		await fs.writeFile(filePath, data, "utf8");
 		console.log("Data written to ${filePath}");

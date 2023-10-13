@@ -5,7 +5,7 @@ import {QueryNode} from "../src/controller/QueryNode";
 import {WhereNode} from "../src/controller/WhereNode";
 import e from "express";
 import exp from "constants";
-import {DataSet, Section} from "../src/controller/DataSet";
+import {DataSet, DatasetSection} from "../src/controller/DataSet";
 
 describe("test suit for WhereNode class", function () {
 	// invalid: empty string for is
@@ -276,7 +276,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		expect(result).to.have.lengthOf(mockDataSet.length);
 	});
 	it("Should filter and only return courses with an average greater than 90", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -323,7 +323,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		// expect(result).to.have.members([{courses_avg: 95, courses_dept: "cpsc", courses_instructor: "smith"}]);
 	});
 	it("Should filter and only return courses with an average less than 90", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -371,7 +371,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		expect(result).to.have.lengthOf(2);
 	});
 	it("should filter and not return any results if the filter criteria matches none of the items", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -419,7 +419,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		expect(result).to.have.lengthOf(0);
 	});
 	it("should filter and only return the course that has avg EQ to 95", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -467,7 +467,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		expect(result).to.have.lengthOf(1);
 	});
 	it("should filter and only return courses in CPSC department", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -515,7 +515,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		expect(result).to.have.lengthOf(1);
 	});
 	it("should filter and only return course with instructor smith based on wildcard at start", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -564,7 +564,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 	});
 	it("should filter and return the math course based on *s wildcard, as the instructors name ends with s"
 		, function () {
-			const dataset: Section[] = [
+			const dataset: DatasetSection[] = [
 				{
 					uuid: "someUUID1",
 					id: "someID1",
@@ -615,7 +615,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		"should filter and return the math and cpsc course based on *s* wildcard, " +
 			"as the instructors names contain an s",
 		function () {
-			const dataset: Section[] = [
+			const dataset: DatasetSection[] = [
 				{
 					uuid: "someUUID1",
 					id: "someID1",
@@ -665,7 +665,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 	);
 	// Logic Comparisons
 	it("should filter and return only the CPSC course as it is in the cpsc dept AND have avg above 86", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -711,7 +711,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		expect(result).to.lengthOf(1);
 	});
 	it("should filter and return only the CPSC course as it is in the cpsc dept AND have avg above 80", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -758,7 +758,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 	});
 	it("should filter and return only the math and cpwc course as it is in the cpsc dept or have avg above 84"
 		, function () {
-			const dataset: Section[] = [
+			const dataset: DatasetSection[] = [
 				{
 					uuid: "someUUID1",
 					id: "someID1",
@@ -804,7 +804,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 			expect(result).to.lengthOf(2);
 		});
 	it("should filter and return the math and bio course based on NOT comparison", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
@@ -852,7 +852,7 @@ describe("Test suite for WhereNode class evaluate method", function () {
 		expect(result).to.have.lengthOf(2);
 	});
 	it("should filter and return none of the options due to NOT filter", function () {
-		const dataset: Section[] = [
+		const dataset: DatasetSection[] = [
 			{
 				uuid: "someUUID1",
 				id: "someID1",
