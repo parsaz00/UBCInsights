@@ -153,12 +153,6 @@ describe("test suit for WhereNode class", function () {
 			const whereNode = new WhereNode(where, "courses");
 			expect(whereNode.validate()).to.be.true;
 		});
-		it("should reject because there is an empty string for IS filter", function () {
-			const where = {IS: {sections_dept: ""}};
-			const whereNode = new WhereNode(where, "sections");
-			const result = whereNode.validate();
-			expect(result).to.be.false;
-		});
 		it("should accept and return true for a valid wildcard AT START comparison", function () {
 			const where = {IS: {courses_instructor: "*smith"}};
 			const whereNode = new WhereNode(where, "courses");

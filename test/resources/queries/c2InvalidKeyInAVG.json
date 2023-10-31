@@ -1,0 +1,26 @@
+{
+	"title": "c2 invalid: Invalid key in avg",
+	"input": {
+		"WHERE": {},
+		"OPTIONS": {
+			"COLUMNS": [
+				"avgRoomName"
+			],
+			"ORDER": "avgRoomName"
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_fullname"
+			],
+			"APPLY": [
+				{
+					"avgRoomName": {
+						"AVG": "rooms_name"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}

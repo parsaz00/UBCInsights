@@ -29,7 +29,8 @@ export default class InsightFacade implements IInsightFacade {
 	}
 	// citation: Used GPT to get idea for this approach. suggested using a method in tandem with a boolean member
 	// 			 to ensure that datasets are loaded before any method is called
-	private ensureDatasetsLoaded(): void {
+
+	public ensureDatasetsLoaded(): void {
 		if (!this.datasetsLoaded) {
 			try {
 				fs.ensureDirSync(dataSetFolder);
@@ -46,6 +47,7 @@ export default class InsightFacade implements IInsightFacade {
 			}
 		}
 	}
+
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 		this.ensureDatasetsLoaded();
 		if (!isNotEmptyOrWhitespace(id)) {
@@ -74,6 +76,7 @@ export default class InsightFacade implements IInsightFacade {
 		tempDataSet.numRows = tempDataSet.section.length;
 		return Promise.resolve(keysArray);
 	}
+
 	public removeDataset(id: string): Promise<string> {
 		this.ensureDatasetsLoaded();
 		if (!isNotEmptyOrWhitespace(id)) {
@@ -96,6 +99,7 @@ export default class InsightFacade implements IInsightFacade {
 		this.datasetmap.map.delete(id);
 		return Promise.resolve(id);
 	}
+
 	public listDatasets(): Promise<InsightDataset[]> {
 		this.ensureDatasetsLoaded();
 		const insightDatasets: InsightDataset[] = Array.from(this.datasetmap.map.values()).map((dataset) => ({
@@ -105,6 +109,7 @@ export default class InsightFacade implements IInsightFacade {
 		}));
 		return Promise.resolve(insightDatasets);
 	}
+
 	public performQuery(query: unknown): Promise<InsightResult[]> {
 		this.ensureDatasetsLoaded();
 		// Step 1: Ensure that the query is an object
@@ -136,6 +141,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return Promise.resolve(results);
 	}
+
 	private extractDatasetIDFromQuery(query: any): string | null {
 		let datasetID = this.extractFromWhere(query);
 		if (datasetID) {
@@ -143,6 +149,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return this.extractFromOptions(query);
 	}
+
 	// Citation: Chat GPT used to help create the logic and implementation for this method and extractFromOptions
 	private extractFromWhere(query: any): string | null {
 		if (query && query.WHERE) {
@@ -170,6 +177,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return null;
 	}
+
 	private extractFromOptions(query: any): string | null {
 		if (query && query.OPTIONS && query.OPTIONS.COLUMNS) {
 			for (let column of query.OPTIONS.COLUMNS) {
@@ -181,9 +189,11 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return null;
 	}
+
 	private getDataSetID(query: any): string {
 		return this.extractDatasetIDFromQuery(query) || "";
 	}
+
 	private getDataset(dataSetID: string): DataSet {
 		const dataset = this.datasetmap.map.get(dataSetID);
 		if (!dataset) {
@@ -229,7 +239,7 @@ function validateAgainstSchema(jsonData: any, schema: any): boolean {
 	}
 	return true; // Validation passed
 }
-// Citation:function below generated with help of ChatGPT
+// Citation: the next three functions below generated with help of ChatGPT
 function identifierSwitch(obj: any): DatasetSection {
 	let year: number;
 	if (obj.Section === "overall") {
@@ -241,7 +251,6 @@ function identifierSwitch(obj: any): DatasetSection {
 		obj.Professor || "", obj.Subject || "", year || 0, obj.Avg || 0, obj.Pass || 0,
 		obj.Fail || 0, obj.Audit || 0);
 }
-// Citation: function below generated with help of ChatGPT
 async function processFiles(fileContents: Map<string, string>, schema: any, dataset: DataSet) {
 	for (const [fileName, data] of fileContents.entries()) {
 		try {
@@ -267,7 +276,6 @@ async function processFiles(fileContents: Map<string, string>, schema: any, data
 		}
 	}
 }
-// Citation: function below generated with help of ChatGPT
 async function writeToJsonFile(filePath: string, data: string) {
 	try {
 		const dir = filePath.substring(0, filePath.lastIndexOf("/"));
@@ -281,7 +289,6 @@ async function writeToJsonFile(filePath: string, data: string) {
 		return Promise.reject(new InsightError("Invalid writing path"));
 	}
 }
-// Citation: function below generated with help of ChatGPT
 async function deleteFile(filePath: string): Promise<void> {
 	try {
 		await fs.unlink(filePath);

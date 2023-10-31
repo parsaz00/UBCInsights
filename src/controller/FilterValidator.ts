@@ -18,11 +18,13 @@ export class FilterValidator {
 	 */
 	public validateFilter(filter: any): boolean {
 		if (typeof filter !== "object" || filter == null) {
+			console.log("first if of ValidateFilter");
 			return false;
 		}
 		const keys = Object.keys(filter);
 
 		if (keys.length !== 1) {
+			console.log("2nd if of ValidateFilter");
 			return false;
 		}
 		const key = keys[0];
@@ -42,6 +44,12 @@ export class FilterValidator {
 				return this.validateSComparator(filter);
 			case "NOT":
 				return this.validateNegation(filter[key]);
+			case "GROUP":
+				return this.isValidGroup(filter[key]);
+			case "APPLY":
+				return this.isValidApply(filter[key]);
+			case "ORDER":
+				return this.isValidSort(filter[key]);
 			default:
 				return false;
 		}
@@ -99,12 +107,17 @@ export class FilterValidator {
 		}
 		return true;
 	}
+
 	// FIRST PART BEFORE underscore is dynamic
 	// Citation: Used ChatGPT to figure out how to write the syntax for map (`${this.dataSetID}_${suffix}`)
 	private isValidField(field: string): boolean {
-		const validSuffixes = ["uuid", "id", "title", "instructor", "dept", "year", "avg", "pass", "fail", "audit"];
-		const validFields = validSuffixes.map((suffix) => `${this.dataSetID}_${suffix}`);
-		return validFields.includes(field);
+		const validSuffixesCourses = ["uuid", "id", "title", "instructor", "dept", "year"
+			, "avg", "pass", "fail", "audit"];
+		const validSuffixesRooms = ["fullname", "shortname", "number", "name", "address", "type"
+			, "furniture", "href", "lat", "lon", "seats"];
+		const validFieldsCourses = validSuffixesCourses.map((suffix) => `${this.dataSetID}_${suffix}`);
+		const validFieldsRooms = validSuffixesRooms.map((suffix) => `${this.dataSetID}_${suffix}`);
+		return validFieldsCourses.includes(field) || validFieldsRooms.includes(field);
 	}
 
 	// Validate SCOMPARATOR (IS)
@@ -182,5 +195,80 @@ export class FilterValidator {
 			return false;
 		}
 		return true;
+	}
+
+	// NEW METHODS FOR C2
+
+	private isValidGroup(group: any[]): boolean {
+		if (!Array.isArray(group)) {
+			return false;
+		}
+		for (const key of group) {
+			if (!this.isValidField(key)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private isValidApply(apply: any[]): boolean {
+		if (!Array.isArray(apply)) {
+			return false;
+		}
+		let applyKeys: string[] = [];
+		for (const rule of apply) {
+			const applyKey = Object.keys(rule)[0];
+			if(applyKeys.includes(applyKey)) {
+				return false; // duplicate key found
+			}
+			applyKeys.push(applyKey);
+
+			const token = Object.keys(rule[applyKey])[0];
+			const key = rule[applyKey][token];
+
+			if (!["MAX", "MIN", "AVG", "COUNT", "SUM"].includes(token)) {
+				return false;
+			}
+			if (["MAX", "MIN", "AVG", "SUM"].includes(token) && !this.isValidMField(key)) {
+				return false;
+			}
+			if (token === "COUNT" && !this.isValidField(key)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private isValidSort(sort: any): boolean {
+		if (typeof sort === "string") {
+			return this.isValidField(sort);
+		}
+
+		if (typeof sort !== "object" || sort === null) {
+			return false;
+		}
+
+		const direction = sort["dir"];
+		const keys = sort["keys"];
+
+		if (!["UP", "DOWN"].includes(direction)) {
+			return false;
+		}
+
+		if (!Array.isArray(keys) || keys.length === 0) {
+			return false;
+		}
+
+		for (const key of keys) {
+			if (!this.isValidField(key)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private isValidMField(field: string): boolean {
+		const validMFields = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
+		return validMFields.includes(field.split("_")[1]);
 	}
 }

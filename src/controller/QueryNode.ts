@@ -2,7 +2,8 @@ import {InsightError, InsightResult} from "./IInsightFacade";
 import {WhereNode} from "./WhereNode";
 import {OptionNode} from "./OptionNode";
 import {DataSet} from "./DataSet";
-
+import {GroupingProcessor} from "./GroupingProcessor";
+import {ApplyProcessor} from "./ApplyProcessor";
 /**
  * High level represents of a query
  * Class will delegate the validation and evaluation of the WHERE and OPTIONS clauses to the WhereNode and OptionNode
@@ -27,7 +28,8 @@ export class QueryNode {
 		}
 		this.dataSetID = dataSetID;
 		this.whereNode = new WhereNode(query.WHERE, this.dataSetID);
-		this.optionNode = new OptionNode(query.OPTIONS, this.dataSetID);
+		this.optionNode = new OptionNode(query.OPTIONS, this.dataSetID
+			, query.TRANSFORMATIONS?.GROUP, query.TRANSFORMATIONS?.APPLY);
 	}
 
 	/**
@@ -49,6 +51,20 @@ export class QueryNode {
 
 	public evaluate(dataset: DataSet): InsightResult[] {
 		const filteredResults = this.whereNode.evaluate(dataset.section);
+		// If GROUP and APPLY clauses are provided, we will process them
+		if (this.optionNode.group && this.optionNode.apply) {
+			const groupingProcessor = new GroupingProcessor(filteredResults, this.optionNode.group);
+			const groupedData = groupingProcessor.groupByKeys();
+
+			const applyProcessor = new ApplyProcessor(groupedData, this.optionNode.apply, this.optionNode.group);
+			const appliedData = applyProcessor.processApplyRules();
+
+			// Convert Map to Array for further processing
+			const processedResults = Array.from(appliedData.values());
+			return this.optionNode.evaluate(processedResults);
+		}
 		return this.optionNode.evaluate(filteredResults);
 	}
 }
+
+

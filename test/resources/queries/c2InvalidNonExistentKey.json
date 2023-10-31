@@ -1,0 +1,18 @@
+{
+	"title": "c2 invalid: Invalid key rooms_nonexistentKey in IS",
+	"input": {
+		"WHERE": {
+			"IS": {
+				"rooms_nonexistentKey": "DMP"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_name"
+			],
+			"ORDER": "rooms_name"
+		}
+	},
+	"errorExpected": true,
+	"expected": "InsightError"
+}

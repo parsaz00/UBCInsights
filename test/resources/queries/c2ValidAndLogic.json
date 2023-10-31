@@ -1,0 +1,40 @@
+{
+	"title": "valid c2 AND logic",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"IS": {
+						"rooms_fullname": "Pharmaceutical Sciences Building"
+					}
+				},
+				{
+					"GT": {
+						"rooms_seats": 100
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_number",
+				"rooms_seats"
+			],
+			"ORDER": "rooms_seats"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"rooms_fullname": "Pharmaceutical Sciences Building",
+			"rooms_number": "1201",
+			"rooms_seats": 167
+		},
+		{
+			"rooms_fullname": "Pharmaceutical Sciences Building",
+			"rooms_number": "1101",
+			"rooms_seats": 236
+		}
+	]
+}
