@@ -82,8 +82,8 @@ export class GroupingProcessor {
 		for (const key of this.groupKeys) {
 			const strippedKey = this.stripPrefix(key);
 			if (!Object.prototype.hasOwnProperty.call(this.dataset[0], strippedKey)) {
-				console.log(`DEBUG: Stripped key is ${strippedKey}, original key was ${key}`);
-				console.log("DEBUG: First record in dataset:", this.dataset[0]);
+				// console.log(`DEBUG: Stripped key is ${strippedKey}, original key was ${key}`);
+				// console.log("DEBUG: First record in dataset:", this.dataset[0]);
 				throw new InsightError(`Invalid group key: ${key}`);
 			}
 		}
