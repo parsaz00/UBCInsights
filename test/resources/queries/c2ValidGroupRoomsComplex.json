@@ -1,0 +1,624 @@
+{
+	"title": "c2 valid  Group rooms by building name and room type, then calculate the average seating capacity and count of rooms",
+	"input": {
+		"WHERE": {},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_type",
+				"avgSeats",
+				"roomCount"
+			],
+			"ORDER": {
+				"dir": "UP",
+				"keys": [
+					"rooms_fullname",
+					"rooms_type"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_fullname",
+				"rooms_type"
+			],
+			"APPLY": [
+				{
+					"avgSeats": {
+						"AVG": "rooms_seats"
+					}
+				},
+				{
+					"roomCount": {
+						"COUNT": "rooms_name"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"rooms_fullname": "Allard Hall (LAW)",
+			"rooms_type": "Case Style",
+			"avgSeats": 72,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Allard Hall (LAW)",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 28,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Anthropology and Sociology",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 90,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Anthropology and Sociology",
+			"rooms_type": "Small Group",
+			"avgSeats": 32,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Aquatic Ecosystems Research Laboratory",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 144,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Auditorium Annex",
+			"rooms_type": "Small Group",
+			"avgSeats": 20.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Biological Sciences",
+			"rooms_type": "Small Group",
+			"avgSeats": 16,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Biological Sciences",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 152,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Brock Hall Annex",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 24,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Brock Hall Annex",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 70,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_type": "Case Style",
+			"avgSeats": 82.17,
+			"roomCount": 6
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 40.56,
+			"roomCount": 18
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_type": "Small Group",
+			"avgSeats": 27,
+			"roomCount": 27
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 123.8,
+			"roomCount": 10
+		},
+		{
+			"rooms_fullname": "Centre for Interactive  Research on Sustainability",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 426,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Chemical and Biological Engineering Building",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 60,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Chemical and Biological Engineering Building",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 147,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Chemistry",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 152.17,
+			"roomCount": 6
+		},
+		{
+			"rooms_fullname": "Civil and Mechanical Engineering",
+			"rooms_type": "Case Style",
+			"avgSeats": 47,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Civil and Mechanical Engineering",
+			"rooms_type": "Small Group",
+			"avgSeats": 24,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Civil and Mechanical Engineering",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 100,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Earth Sciences Building",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 193.33,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Earth and Ocean Sciences - Main",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 50,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Food, Nutrition and Health",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 48.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Food, Nutrition and Health",
+			"rooms_type": "Small Group",
+			"avgSeats": 22.33,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Food, Nutrition and Health",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 99,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Forest Sciences Centre",
+			"rooms_type": "Case Style",
+			"avgSeats": 65,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Forest Sciences Centre",
+			"rooms_type": "Small Group",
+			"avgSeats": 23.67,
+			"roomCount": 6
+		},
+		{
+			"rooms_fullname": "Forest Sciences Centre",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 174.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Frank Forward",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 63,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Frank Forward",
+			"rooms_type": "Small Group",
+			"avgSeats": 39.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Frederic Lasserre",
+			"rooms_type": "",
+			"avgSeats": 60,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Frederic Lasserre",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 51,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Frederic Lasserre",
+			"rooms_type": "Small Group",
+			"avgSeats": 20,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Frederic Lasserre",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 87,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Friedman Building",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 160,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Geography",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 66.8,
+			"roomCount": 5
+		},
+		{
+			"rooms_fullname": "Geography",
+			"rooms_type": "Small Group",
+			"avgSeats": 30,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Geography",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 225,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Hebb",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 54,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Hebb",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 375,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Hennings",
+			"rooms_type": "Small Group",
+			"avgSeats": 32,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Hennings",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 187.33,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Henry Angus",
+			"rooms_type": "Case Style",
+			"avgSeats": 49.38,
+			"roomCount": 8
+		},
+		{
+			"rooms_fullname": "Henry Angus",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 46.57,
+			"roomCount": 7
+		},
+		{
+			"rooms_fullname": "Henry Angus",
+			"rooms_type": "Small Group",
+			"avgSeats": 21.75,
+			"roomCount": 4
+		},
+		{
+			"rooms_fullname": "Henry Angus",
+			"rooms_type": "TBD",
+			"avgSeats": 32,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Henry Angus",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 88.25,
+			"roomCount": 8
+		},
+		{
+			"rooms_fullname": "Hugh Dempster Pavilion",
+			"rooms_type": "Small Group",
+			"avgSeats": 40,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Hugh Dempster Pavilion",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 120,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Iona Building",
+			"rooms_type": "Case Style",
+			"avgSeats": 100,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Iona Building",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 50,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Irving K Barber Learning Centre",
+			"rooms_type": "Case Style",
+			"avgSeats": 50,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Irving K Barber Learning Centre",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 112,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Irving K Barber Learning Centre",
+			"rooms_type": "Small Group",
+			"avgSeats": 16.8,
+			"roomCount": 15
+		},
+		{
+			"rooms_fullname": "Irving K Barber Learning Centre",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 154,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Jack Bell Building for the School of Social Work",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 39.25,
+			"roomCount": 4
+		},
+		{
+			"rooms_fullname": "Jack Bell Building for the School of Social Work",
+			"rooms_type": "Small Group",
+			"avgSeats": 14.67,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Leonard S. Klinck (also known as CSCI)",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 58.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Leonard S. Klinck (also known as CSCI)",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 194,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Life Sciences Centre",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 275,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "MacLeod",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 68,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "MacLeod",
+			"rooms_type": "Small Group",
+			"avgSeats": 40,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "MacLeod",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 129.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "MacMillan",
+			"rooms_type": "Case Style",
+			"avgSeats": 72,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "MacMillan",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 47,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "MacMillan",
+			"rooms_type": "Small Group",
+			"avgSeats": 12,
+			"roomCount": 15
+		},
+		{
+			"rooms_fullname": "MacMillan",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 137,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Mathematics",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 39,
+			"roomCount": 4
+		},
+		{
+			"rooms_fullname": "Mathematics",
+			"rooms_type": "Small Group",
+			"avgSeats": 38.33,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Mathematics",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 224,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Mathematics Annex",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 106,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Neville Scarfe",
+			"rooms_type": "Small Group",
+			"avgSeats": 34.48,
+			"roomCount": 21
+		},
+		{
+			"rooms_fullname": "Neville Scarfe",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 280,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Orchard Commons",
+			"rooms_type": "Active Learning",
+			"avgSeats": 30.22,
+			"roomCount": 9
+		},
+		{
+			"rooms_fullname": "Orchard Commons",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 27,
+			"roomCount": 10
+		},
+		{
+			"rooms_fullname": "Orchard Commons",
+			"rooms_type": "Studio Lab",
+			"avgSeats": 60,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Pharmaceutical Sciences Building",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 72,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Pharmaceutical Sciences Building",
+			"rooms_type": "Small Group",
+			"avgSeats": 7.88,
+			"roomCount": 8
+		},
+		{
+			"rooms_fullname": "Pharmaceutical Sciences Building",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 201.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Ponderosa Commons: Oak House",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 40,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "Ponderosa Commons: Oak House",
+			"rooms_type": "Small Group",
+			"avgSeats": 24,
+			"roomCount": 5
+		},
+		{
+			"rooms_fullname": "Robert F. Osborne Centre",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 442,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "Robert F. Osborne Centre",
+			"rooms_type": "Small Group",
+			"avgSeats": 39.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "School of Population and Public Health",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 66,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "School of Population and Public Health",
+			"rooms_type": "Small Group",
+			"avgSeats": 20,
+			"roomCount": 5
+		},
+		{
+			"rooms_fullname": "Student Recreation Centre",
+			"rooms_type": "TBD",
+			"avgSeats": 299,
+			"roomCount": 3
+		},
+		{
+			"rooms_fullname": "The Leon and Thea Koerner University Centre",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 51.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "The Leon and Thea Koerner University Centre",
+			"rooms_type": "Small Group",
+			"avgSeats": 30,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "The Leon and Thea Koerner University Centre",
+			"rooms_type": "Studio Lab",
+			"avgSeats": 30,
+			"roomCount": 1
+		},
+		{
+			"rooms_fullname": "War Memorial Gymnasium",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 32.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "Wesbrook",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 213.5,
+			"roomCount": 2
+		},
+		{
+			"rooms_fullname": "West Mall Swing Space",
+			"rooms_type": "Open Design General Purpose",
+			"avgSeats": 47,
+			"roomCount": 9
+		},
+		{
+			"rooms_fullname": "West Mall Swing Space",
+			"rooms_type": "Small Group",
+			"avgSeats": 27,
+			"roomCount": 9
+		},
+		{
+			"rooms_fullname": "West Mall Swing Space",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 188.75,
+			"roomCount": 4
+		},
+		{
+			"rooms_fullname": "Woodward (Instructional Resources Centre-IRC)",
+			"rooms_type": "Small Group",
+			"avgSeats": 16.5,
+			"roomCount": 10
+		},
+		{
+			"rooms_fullname": "Woodward (Instructional Resources Centre-IRC)",
+			"rooms_type": "Tiered Large Group",
+			"avgSeats": 188.67,
+			"roomCount": 6
+		}
+	]
+}

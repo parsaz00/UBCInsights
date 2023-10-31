@@ -1,0 +1,42 @@
+{
+	"title": "valid c2 IS rooms_number 101",
+	"input": {
+		"WHERE": {
+			"IS": {
+				"rooms_number": "101"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_number",
+				"rooms_fullname",
+				"rooms_number",
+				"rooms_furniture"
+			],
+			"ORDER": "rooms_fullname"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"rooms_number": "101",
+			"rooms_fullname": "Chemical and Biological Engineering Building",
+			"rooms_furniture": "Classroom-Fixed Tables/Movable Chairs"
+		},
+		{
+			"rooms_number": "101",
+			"rooms_fullname": "Geography",
+			"rooms_furniture": "Classroom-Movable Tables & Chairs"
+		},
+		{
+			"rooms_number": "101",
+			"rooms_fullname": "Hugh Dempster Pavilion",
+			"rooms_furniture": "Classroom-Movable Tables & Chairs"
+		},
+		{
+			"rooms_number": "101",
+			"rooms_fullname": "The Leon and Thea Koerner University Centre",
+			"rooms_furniture": "Classroom-Movable Tables & Chairs"
+		}
+	]
+}

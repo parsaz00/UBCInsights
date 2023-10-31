@@ -1,0 +1,112 @@
+{
+	"title": "valid c2 nested OR and AND logic",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"IS": {
+						"rooms_fullname": "Buchanan"
+					}
+				},
+				{
+					"OR": [
+						{
+							"GT": {
+								"rooms_seats": 100
+							}
+						},
+						{
+							"IS": {
+								"rooms_type": "Tiered Large Group"
+							}
+						}
+					]
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_number",
+				"rooms_seats",
+				"rooms_type"
+			],
+			"ORDER": "rooms_fullname"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "A101",
+			"rooms_seats": 275,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "A102",
+			"rooms_seats": 150,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "A103",
+			"rooms_seats": 131,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "A104",
+			"rooms_seats": 150,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "A201",
+			"rooms_seats": 181,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "A202",
+			"rooms_seats": 108,
+			"rooms_type": "Case Style"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "A203",
+			"rooms_seats": 108,
+			"rooms_type": "Case Style"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "B313",
+			"rooms_seats": 78,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "B315",
+			"rooms_seats": 78,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "D217",
+			"rooms_seats": 65,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "D218",
+			"rooms_seats": 65,
+			"rooms_type": "Tiered Large Group"
+		},
+		{
+			"rooms_fullname": "Buchanan",
+			"rooms_number": "D219",
+			"rooms_seats": 65,
+			"rooms_type": "Tiered Large Group"
+		}
+	]
+}

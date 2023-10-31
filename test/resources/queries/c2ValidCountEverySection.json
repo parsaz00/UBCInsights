@@ -1,0 +1,784 @@
+{
+	"title": "c2 count of sections for every department",
+	"input": {
+		"WHERE": {},
+		"OPTIONS": {
+			"COLUMNS": [
+				"sections_dept",
+				"sectionCount"
+			],
+			"ORDER": "sectionCount"
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"sections_dept"
+			],
+			"APPLY": [
+				{
+					"sectionCount": {
+						"COUNT": "sections_uuid"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"sections_dept": "test",
+			"sectionCount": 1
+		},
+		{
+			"sections_dept": "info",
+			"sectionCount": 2
+		},
+		{
+			"sections_dept": "iwme",
+			"sectionCount": 2
+		},
+		{
+			"sections_dept": "aanb",
+			"sectionCount": 4
+		},
+		{
+			"sections_dept": "fhis",
+			"sectionCount": 4
+		},
+		{
+			"sections_dept": "gbpr",
+			"sectionCount": 4
+		},
+		{
+			"sections_dept": "lais",
+			"sectionCount": 4
+		},
+		{
+			"sections_dept": "ursy",
+			"sectionCount": 4
+		},
+		{
+			"sections_dept": "cnto",
+			"sectionCount": 5
+		},
+		{
+			"sections_dept": "iar",
+			"sectionCount": 5
+		},
+		{
+			"sections_dept": "ufor",
+			"sectionCount": 6
+		},
+		{
+			"sections_dept": "appp",
+			"sectionCount": 8
+		},
+		{
+			"sections_dept": "phrm",
+			"sectionCount": 11
+		},
+		{
+			"sections_dept": "sts",
+			"sectionCount": 12
+		},
+		{
+			"sections_dept": "clch",
+			"sectionCount": 14
+		},
+		{
+			"sections_dept": "laso",
+			"sectionCount": 14
+		},
+		{
+			"sections_dept": "arbc",
+			"sectionCount": 16
+		},
+		{
+			"sections_dept": "hinu",
+			"sectionCount": 16
+		},
+		{
+			"sections_dept": "rgla",
+			"sectionCount": 16
+		},
+		{
+			"sections_dept": "udes",
+			"sectionCount": 16
+		},
+		{
+			"sections_dept": "asic",
+			"sectionCount": 17
+		},
+		{
+			"sections_dept": "bala",
+			"sectionCount": 17
+		},
+		{
+			"sections_dept": "coec",
+			"sectionCount": 17
+		},
+		{
+			"sections_dept": "baul",
+			"sectionCount": 18
+		},
+		{
+			"sections_dept": "fnis",
+			"sectionCount": 18
+		},
+		{
+			"sections_dept": "hebr",
+			"sectionCount": 18
+		},
+		{
+			"sections_dept": "onco",
+			"sectionCount": 18
+		},
+		{
+			"sections_dept": "fnel",
+			"sectionCount": 20
+		},
+		{
+			"sections_dept": "mdvl",
+			"sectionCount": 20
+		},
+		{
+			"sections_dept": "rmst",
+			"sectionCount": 20
+		},
+		{
+			"sections_dept": "sans",
+			"sectionCount": 20
+		},
+		{
+			"sections_dept": "vant",
+			"sectionCount": 20
+		},
+		{
+			"sections_dept": "pols",
+			"sectionCount": 22
+		},
+		{
+			"sections_dept": "biof",
+			"sectionCount": 23
+		},
+		{
+			"sections_dept": "gpp",
+			"sectionCount": 24
+		},
+		{
+			"sections_dept": "dani",
+			"sectionCount": 26
+		},
+		{
+			"sections_dept": "hunu",
+			"sectionCount": 26
+		},
+		{
+			"sections_dept": "chil",
+			"sectionCount": 27
+		},
+		{
+			"sections_dept": "swed",
+			"sectionCount": 27
+		},
+		{
+			"sections_dept": "cics",
+			"sectionCount": 28
+		},
+		{
+			"sections_dept": "grek",
+			"sectionCount": 28
+		},
+		{
+			"sections_dept": "gsat",
+			"sectionCount": 28
+		},
+		{
+			"sections_dept": "anat",
+			"sectionCount": 30
+		},
+		{
+			"sections_dept": "bota",
+			"sectionCount": 30
+		},
+		{
+			"sections_dept": "cnrs",
+			"sectionCount": 31
+		},
+		{
+			"sections_dept": "last",
+			"sectionCount": 32
+		},
+		{
+			"sections_dept": "urst",
+			"sectionCount": 32
+		},
+		{
+			"sections_dept": "jrnl",
+			"sectionCount": 35
+		},
+		{
+			"sections_dept": "zool",
+			"sectionCount": 36
+		},
+		{
+			"sections_dept": "scan",
+			"sectionCount": 38
+		},
+		{
+			"sections_dept": "mrne",
+			"sectionCount": 40
+		},
+		{
+			"sections_dept": "name",
+			"sectionCount": 42
+		},
+		{
+			"sections_dept": "surg",
+			"sectionCount": 43
+		},
+		{
+			"sections_dept": "cpen",
+			"sectionCount": 44
+		},
+		{
+			"sections_dept": "fish",
+			"sectionCount": 44
+		},
+		{
+			"sections_dept": "arcl",
+			"sectionCount": 47
+		},
+		{
+			"sections_dept": "latn",
+			"sectionCount": 47
+		},
+		{
+			"sections_dept": "bapa",
+			"sectionCount": 49
+		},
+		{
+			"sections_dept": "ccst",
+			"sectionCount": 49
+		},
+		{
+			"sections_dept": "pers",
+			"sectionCount": 49
+		},
+		{
+			"sections_dept": "port",
+			"sectionCount": 50
+		},
+		{
+			"sections_dept": "astu",
+			"sectionCount": 52
+		},
+		{
+			"sections_dept": "babs",
+			"sectionCount": 52
+		},
+		{
+			"sections_dept": "ceen",
+			"sectionCount": 54
+		},
+		{
+			"sections_dept": "enph",
+			"sectionCount": 56
+		},
+		{
+			"sections_dept": "igen",
+			"sectionCount": 56
+		},
+		{
+			"sections_dept": "obst",
+			"sectionCount": 63
+		},
+		{
+			"sections_dept": "soil",
+			"sectionCount": 64
+		},
+		{
+			"sections_dept": "punj",
+			"sectionCount": 68
+		},
+		{
+			"sections_dept": "hgse",
+			"sectionCount": 70
+		},
+		{
+			"sections_dept": "isci",
+			"sectionCount": 71
+		},
+		{
+			"sections_dept": "nrsc",
+			"sectionCount": 76
+		},
+		{
+			"sections_dept": "atsc",
+			"sectionCount": 77
+		},
+		{
+			"sections_dept": "nest",
+			"sectionCount": 82
+		},
+		{
+			"sections_dept": "envr",
+			"sectionCount": 83
+		},
+		{
+			"sections_dept": "korn",
+			"sectionCount": 84
+		},
+		{
+			"sections_dept": "caps",
+			"sectionCount": 86
+		},
+		{
+			"sections_dept": "baen",
+			"sectionCount": 87
+		},
+		{
+			"sections_dept": "cens",
+			"sectionCount": 87
+		},
+		{
+			"sections_dept": "basc",
+			"sectionCount": 89
+		},
+		{
+			"sections_dept": "bait",
+			"sectionCount": 90
+		},
+		{
+			"sections_dept": "itst",
+			"sectionCount": 98
+		},
+		{
+			"sections_dept": "bmeg",
+			"sectionCount": 99
+		},
+		{
+			"sections_dept": "fopr",
+			"sectionCount": 104
+		},
+		{
+			"sections_dept": "libe",
+			"sectionCount": 108
+		},
+		{
+			"sections_dept": "relg",
+			"sectionCount": 108
+		},
+		{
+			"sections_dept": "phth",
+			"sectionCount": 122
+		},
+		{
+			"sections_dept": "russ",
+			"sectionCount": 122
+		},
+		{
+			"sections_dept": "medi",
+			"sectionCount": 126
+		},
+		{
+			"sections_dept": "elec",
+			"sectionCount": 131
+		},
+		{
+			"sections_dept": "cogs",
+			"sectionCount": 137
+		},
+		{
+			"sections_dept": "scie",
+			"sectionCount": 140
+		},
+		{
+			"sections_dept": "wrds",
+			"sectionCount": 141
+		},
+		{
+			"sections_dept": "cell",
+			"sectionCount": 144
+		},
+		{
+			"sections_dept": "lfs",
+			"sectionCount": 145
+		},
+		{
+			"sections_dept": "ends",
+			"sectionCount": 146
+		},
+		{
+			"sections_dept": "eced",
+			"sectionCount": 147
+		},
+		{
+			"sections_dept": "rmes",
+			"sectionCount": 147
+		},
+		{
+			"sections_dept": "ba",
+			"sectionCount": 149
+		},
+		{
+			"sections_dept": "plan",
+			"sectionCount": 149
+		},
+		{
+			"sections_dept": "baac",
+			"sectionCount": 155
+		},
+		{
+			"sections_dept": "grsj",
+			"sectionCount": 161
+		},
+		{
+			"sections_dept": "food",
+			"sectionCount": 164
+		},
+		{
+			"sections_dept": "midw",
+			"sectionCount": 164
+		},
+		{
+			"sections_dept": "basm",
+			"sectionCount": 165
+		},
+		{
+			"sections_dept": "rsot",
+			"sectionCount": 165
+		},
+		{
+			"sections_dept": "bahr",
+			"sectionCount": 175
+		},
+		{
+			"sections_dept": "fipr",
+			"sectionCount": 175
+		},
+		{
+			"sections_dept": "cohr",
+			"sectionCount": 176
+		},
+		{
+			"sections_dept": "educ",
+			"sectionCount": 183
+		},
+		{
+			"sections_dept": "bama",
+			"sectionCount": 188
+		},
+		{
+			"sections_dept": "astr",
+			"sectionCount": 189
+		},
+		{
+			"sections_dept": "pcth",
+			"sectionCount": 189
+		},
+		{
+			"sections_dept": "bams",
+			"sectionCount": 200
+		},
+		{
+			"sections_dept": "fist",
+			"sectionCount": 206
+		},
+		{
+			"sections_dept": "crwr",
+			"sectionCount": 208
+		},
+		{
+			"sections_dept": "rhsc",
+			"sectionCount": 210
+		},
+		{
+			"sections_dept": "cons",
+			"sectionCount": 217
+		},
+		{
+			"sections_dept": "adhe",
+			"sectionCount": 232
+		},
+		{
+			"sections_dept": "medg",
+			"sectionCount": 248
+		},
+		{
+			"sections_dept": "arst",
+			"sectionCount": 251
+		},
+		{
+			"sections_dept": "fre",
+			"sectionCount": 261
+		},
+		{
+			"sections_dept": "edcp",
+			"sectionCount": 270
+		},
+		{
+			"sections_dept": "anth",
+			"sectionCount": 279
+		},
+		{
+			"sections_dept": "fmst",
+			"sectionCount": 288
+		},
+		{
+			"sections_dept": "bioc",
+			"sectionCount": 296
+		},
+		{
+			"sections_dept": "larc",
+			"sectionCount": 315
+		},
+		{
+			"sections_dept": "spha",
+			"sectionCount": 318
+		},
+		{
+			"sections_dept": "bafi",
+			"sectionCount": 319
+		},
+		{
+			"sections_dept": "soci",
+			"sectionCount": 322
+		},
+		{
+			"sections_dept": "ital",
+			"sectionCount": 325
+		},
+		{
+			"sections_dept": "phil",
+			"sectionCount": 335
+		},
+		{
+			"sections_dept": "geob",
+			"sectionCount": 338
+		},
+		{
+			"sections_dept": "clst",
+			"sectionCount": 343
+		},
+		{
+			"sections_dept": "dhyg",
+			"sectionCount": 346
+		},
+		{
+			"sections_dept": "wood",
+			"sectionCount": 346
+		},
+		{
+			"sections_dept": "edst",
+			"sectionCount": 372
+		},
+		{
+			"sections_dept": "dent",
+			"sectionCount": 377
+		},
+		{
+			"sections_dept": "stat",
+			"sectionCount": 386
+		},
+		{
+			"sections_dept": "etec",
+			"sectionCount": 413
+		},
+		{
+			"sections_dept": "arth",
+			"sectionCount": 423
+		},
+		{
+			"sections_dept": "path",
+			"sectionCount": 465
+		},
+		{
+			"sections_dept": "libr",
+			"sectionCount": 476
+		},
+		{
+			"sections_dept": "micb",
+			"sectionCount": 478
+		},
+		{
+			"sections_dept": "apbi",
+			"sectionCount": 493
+		},
+		{
+			"sections_dept": "ling",
+			"sectionCount": 495
+		},
+		{
+			"sections_dept": "eece",
+			"sectionCount": 501
+		},
+		{
+			"sections_dept": "poli",
+			"sectionCount": 518
+		},
+		{
+			"sections_dept": "mine",
+			"sectionCount": 528
+		},
+		{
+			"sections_dept": "sowk",
+			"sectionCount": 531
+		},
+		{
+			"sections_dept": "thtr",
+			"sectionCount": 538
+		},
+		{
+			"sections_dept": "audi",
+			"sectionCount": 565
+		},
+		{
+			"sections_dept": "visa",
+			"sectionCount": 600
+		},
+		{
+			"sections_dept": "lled",
+			"sectionCount": 607
+		},
+		{
+			"sections_dept": "spph",
+			"sectionCount": 618
+		},
+		{
+			"sections_dept": "asia",
+			"sectionCount": 629
+		},
+		{
+			"sections_dept": "apsc",
+			"sectionCount": 655
+		},
+		{
+			"sections_dept": "span",
+			"sectionCount": 656
+		},
+		{
+			"sections_dept": "arch",
+			"sectionCount": 685
+		},
+		{
+			"sections_dept": "kin",
+			"sectionCount": 690
+		},
+		{
+			"sections_dept": "mtrl",
+			"sectionCount": 702
+		},
+		{
+			"sections_dept": "cnps",
+			"sectionCount": 720
+		},
+		{
+			"sections_dept": "fnh",
+			"sectionCount": 767
+		},
+		{
+			"sections_dept": "chbe",
+			"sectionCount": 801
+		},
+		{
+			"sections_dept": "phar",
+			"sectionCount": 807
+		},
+		{
+			"sections_dept": "germ",
+			"sectionCount": 832
+		},
+		{
+			"sections_dept": "musc",
+			"sectionCount": 852
+		},
+		{
+			"sections_dept": "frst",
+			"sectionCount": 910
+		},
+		{
+			"sections_dept": "nurs",
+			"sectionCount": 910
+		},
+		{
+			"sections_dept": "geog",
+			"sectionCount": 919
+		},
+		{
+			"sections_dept": "japn",
+			"sectionCount": 966
+		},
+		{
+			"sections_dept": "chin",
+			"sectionCount": 974
+		},
+		{
+			"sections_dept": "hist",
+			"sectionCount": 1010
+		},
+		{
+			"sections_dept": "fren",
+			"sectionCount": 1022
+		},
+		{
+			"sections_dept": "phys",
+			"sectionCount": 1091
+		},
+		{
+			"sections_dept": "epse",
+			"sectionCount": 1101
+		},
+		{
+			"sections_dept": "cpsc",
+			"sectionCount": 1111
+		},
+		{
+			"sections_dept": "law",
+			"sectionCount": 1112
+		},
+		{
+			"sections_dept": "civl",
+			"sectionCount": 1240
+		},
+		{
+			"sections_dept": "chem",
+			"sectionCount": 1254
+		},
+		{
+			"sections_dept": "mech",
+			"sectionCount": 1285
+		},
+		{
+			"sections_dept": "psyc",
+			"sectionCount": 1400
+		},
+		{
+			"sections_dept": "eosc",
+			"sectionCount": 1648
+		},
+		{
+			"sections_dept": "busi",
+			"sectionCount": 1687
+		},
+		{
+			"sections_dept": "biol",
+			"sectionCount": 2041
+		},
+		{
+			"sections_dept": "engl",
+			"sectionCount": 2122
+		},
+		{
+			"sections_dept": "econ",
+			"sectionCount": 2241
+		},
+		{
+			"sections_dept": "math",
+			"sectionCount": 2772
+		},
+		{
+			"sections_dept": "comm",
+			"sectionCount": 3570
+		}
+	]
+}

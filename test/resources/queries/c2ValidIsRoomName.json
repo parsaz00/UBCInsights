@@ -1,0 +1,28 @@
+{
+	"title": "valid c2 IS rooms_name GEOG_101",
+	"input": {
+		"WHERE": {
+			"IS": {
+				"rooms_name": "GEOG_101"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_name",
+				"rooms_fullname",
+				"rooms_number",
+				"rooms_furniture"
+			],
+			"ORDER": "rooms_fullname"
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"rooms_name": "GEOG_101",
+			"rooms_fullname": "Geography",
+			"rooms_number": "101",
+			"rooms_furniture": "Classroom-Movable Tables & Chairs"
+		}
+	]
+}

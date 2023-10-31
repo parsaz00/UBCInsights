@@ -112,6 +112,7 @@ export class WhereNode {
 		});
 		return filteredResults;
 	}
+
 	// Citation: see lines 5-7, used GPT for help
 	private evaluateLT(filterValue: any, dataset: any[]) {
 		const originalField = Object.keys(filterValue)[0];
@@ -236,6 +237,7 @@ export class WhereNode {
 		}
 		return notFilteredResults;
 	}
+
 	private removeDatasetIDPrefix(field: string): string {
 		return field.split("_")[1];
 	}
