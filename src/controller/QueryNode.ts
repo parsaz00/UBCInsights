@@ -1,9 +1,10 @@
-import {InsightError, InsightResult} from "./IInsightFacade";
+import {InsightDatasetKind, InsightError, InsightResult} from "./IInsightFacade";
 import {WhereNode} from "./WhereNode";
 import {OptionNode} from "./OptionNode";
-import {DataSet} from "./DataSet";
+import {DataSet, DatasetElement} from "./DataSet";
 import {GroupingProcessor} from "./GroupingProcessor";
 import {ApplyProcessor} from "./ApplyProcessor";
+
 /**
  * High level represents of a query
  * Class will delegate the validation and evaluation of the WHERE and OPTIONS clauses to the WhereNode and OptionNode
@@ -51,6 +52,7 @@ export class QueryNode {
 
 	public evaluate(dataset: DataSet): InsightResult[] {
 		const filteredResults = this.whereNode.evaluate(dataset.section);
+		console.log("filtered result is", filteredResults);
 		// If GROUP and APPLY clauses are provided, we will process them
 		if (this.optionNode.group && this.optionNode.apply) {
 			const groupingProcessor = new GroupingProcessor(filteredResults, this.optionNode.group);

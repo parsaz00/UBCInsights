@@ -17,19 +17,33 @@ import * as fs from "fs-extra";
 use(chaiAsPromised);
 
 describe("InsightFacade", function () {
+
 	let facade: IInsightFacade;
 
 	// Declare datasets used in tests. You should add more datasets like this!
 	let sections: string;
 	let courses: string;
+	let nodit: string;
 	let rooms: string;
+	let noIRooms: string;
+	let noTable: string;
+	let invalidLink: string;
+	let bldNoTable: string;
+	let lackingField: string;
+	let invalidGeo: string;
 
 	before(function () {
 		// This block runs once and loads the datasets.
 		sections = getContentFromArchives("pair.zip");
 		courses = getContentFromArchives("smallCourses.zip");
+		nodit = getContentFromArchives("noCourseDirectory.zip");
 		rooms = getContentFromArchives("campus.zip");
-
+		noIRooms = getContentFromArchives("noIndex.zip");
+		noTable = getContentFromArchives("noTable.zip");
+		invalidLink = getContentFromArchives("invalidLink.zip");
+		bldNoTable = getContentFromArchives("bldNoTable.zip");
+		lackingField = getContentFromArchives("lackingField.zip");
+		invalidGeo = getContentFromArchives("invalidGeo.zip");
 		// Just in case there is anything hanging around from a previous run of the test suite
 		clearDisk();
 	});
@@ -57,29 +71,17 @@ describe("InsightFacade", function () {
 			clearDisk();
 		});
 
-		// it("should be able to retrieve a dataset after 'crash'", async function() {
-		// 	const facade = new InsightFacade();
-		// 	await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
-		//
-		// 	// Simulate a crash by creating a new instance
-		// 	const newInstance = new InsightFacade();
-		// 	const datasets = await newInstance.listDatasets();
-		//
-		// 	expect(datasets).to.have.length(1);
-		// 	expect(datasets[0].id).to.equal("sections");
-		// });
-		// it("should not retrieve a removed dataset after 'crash'", async function() {
-		// 	await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
-		// 	await facade.removeDataset("sections");
-		//
-		// 	// Simulate a crash by creating a new instance
-		// 	const newInstance = new InsightFacade();
-		// 	const datasets = await newInstance.listDatasets();
-		//
-		// 	expect(datasets).to.be.empty;
-		// });
+		it("should not retrieve a removed dataset after 'crash'", async function () {
+			await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
+			await facade.removeDataset("sections");
 
-		// it("should retrieve multiple datasets after 'crash'", async function() {
+			// Simulate a crash by creating a new instance
+			const newInstance = new InsightFacade();
+			const datasets = await newInstance.listDatasets();
+			expect(datasets).to.be.empty;
+		});
+
+		// it("should retrieve multiple datasets after 'crash'", async function () {
 		// 	const facade = new InsightFacade();
 		//
 		// 	await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
@@ -90,16 +92,20 @@ describe("InsightFacade", function () {
 		// 	const datasets = await newInstance.listDatasets();
 		//
 		// 	expect(datasets).to.have.length(2);
-		// 	expect(datasets.map(d => d.id)).to.include.members(["sections", "courses"]);
+		// 	expect(datasets.map((d) => d.id)).to.include.members(["sections", "courses"]);
 		// });
-		// it("should create a file on disk after adding a dataset", async function() {
-		// 	await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
-		//
-		// 	// Use the correct path where the dataset is saved
-		// 	const fileExists = await fs.pathExists("./data/sections");
-		// 	expect(fileExists).to.be.true;
-		// });
-		// it("should delete the file on disk after removing a dataset", async function() {
+		it("c2 should add rooms dataset", async function () {
+			const result = await facade.addDataset("rooms", rooms, InsightDatasetKind.Rooms);
+			expect(result).to.have.deep.members(["rooms"]);
+		});
+		it("should create a file on disk after adding a dataset", async function () {
+			await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
+
+			// Use the correct path where the dataset is saved
+			const fileExists = await fs.pathExists("./data/sections");
+			expect(fileExists).to.be.true;
+		});
+		// it("should delete the file on disk after removing a dataset", async function () {
 		// 	const facade = new InsightFacade();
 		// 	await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
 		// 	await facade.removeDataset("sections");
@@ -113,40 +119,64 @@ describe("InsightFacade", function () {
 			const result = facade.addDataset("", sections, InsightDatasetKind.Sections);
 			return expect(result).to.eventually.be.rejectedWith(InsightError);
 		});
+
 		it("should reject with a whitespace dataset ID", function () {
 			const result = facade.addDataset(" ", sections, InsightDatasetKind.Sections);
 			return expect(result).to.eventually.be.rejectedWith(InsightError);
 		});
+
 		it("should reject an ID with an underscore", function () {
 			const result = facade.addDataset("invalid_id", sections, InsightDatasetKind.Sections);
 			return expect(result).to.eventually.be.rejectedWith(InsightError);
 		});
+
 		it("should reject adding a dataset with an empty content argument", function () {
 			const invalidContent = "";
 			const result = facade.addDataset("sections", invalidContent, InsightDatasetKind.Sections);
 			return expect(result).to.eventually.be.rejectedWith(InsightError);
 		});
-		// it("should reject adding a dataset with content that is not valid base64 string", function (){
-		// 	const invalidBase64content = "this is not a valid base 64 string";
-		// 	const result = facade.addDataset("sections", invalidBase64content, InsightDatasetKind.Sections);
-		// 	return expect(result).to.eventually.be.rejectedWith(InsightError);
-		// });
-		// it("should reject adding a dataset with content that is not a zip file", function () {
-		// 	const notAZipFileBase64 = Buffer.from("notAZipFile").toString("base64");
-		// 	const result = facade.addDataset("sections", notAZipFileBase64, InsightDatasetKind.Sections);
-		// 	return expect(result).to.eventually.be.rejectedWith(InsightError);
-		// });
-		// it("should reject adding a dataset with a zip file that doesn't contain a courses/ directory", function () {
-		// 	// Here, you'd replace 'invalidZipWithoutCoursesDirBase64' with the actual base64 string of your zip without a courses/ directory
-		// 	const invalidZipWithoutCoursesDirBase64 = "base64EncodedStringOfZipWithoutCoursesDir";
-		// 	const result = facade.addDataset("sections", invalidZipWithoutCoursesDirBase64, InsightDatasetKind.Sections);
-		// 	return expect(result).to.eventually.be.rejectedWith(InsightError);
-		// });
-		it("should remove from disk", async function () {
-			await facade.addDataset("abcd", courses, InsightDatasetKind.Sections);
-			await facade.removeDataset("abcd");
-			return (!fs.existsSync("./data/abcd"));
+
+		it("C2 should reject adding a dataset when the zip file input doesn't contain any valid room", function () {
+			const result = facade.addDataset("sections", courses, InsightDatasetKind.Rooms);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
 		});
+
+		it("C2 should reject adding a dataset without index.htm file", function () {
+			const result = facade.addDataset("sections", noIRooms, InsightDatasetKind.Rooms);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
+
+		it("C2 should reject adding a dataset with an index.htm that doesn't contain any tables", function () {
+			const result = facade.addDataset("sections", noTable, InsightDatasetKind.Rooms);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
+
+		it("C2 should reject adding a dataset with link to a building file that doesn't exist ", function () {
+			const result = facade.addDataset("sections", invalidLink, InsightDatasetKind.Rooms);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
+
+		it("C2 should reject adding a dataset with a building file that contains no room table ", function () {
+			const result = facade.addDataset("sections", bldNoTable, InsightDatasetKind.Rooms);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
+
+		it("C2 should reject adding a dataset with a bd file with rm table doesn't contain every field ", function () {
+			const result = facade.addDataset("sections", lackingField, InsightDatasetKind.Rooms);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
+
+		it("C2 should reject adding a dataset with room of invalid geolocation result", function () {
+			const result = facade.addDataset("sections", invalidGeo, InsightDatasetKind.Rooms);
+			return expect(result).to.eventually.be.rejectedWith(InsightError);
+		});
+
+		it("C2 should accept a valid adding request", async function () {
+			const result = await facade.addDataset("sections", rooms, InsightDatasetKind.Rooms);
+			console.log(result);
+			return expect(result).to.have.deep.members(["sections"]);
+		});
+
 		it("should reject a duplicated ID", async function () {
 			await facade.addDataset("abcd", courses, InsightDatasetKind.Sections);
 			const result = facade.addDataset("abcd", sections, InsightDatasetKind.Sections);
@@ -155,23 +185,23 @@ describe("InsightFacade", function () {
 
 		it("add should write to disk", async function () {
 			await facade.addDataset("abcd", courses, InsightDatasetKind.Sections);
-			return (fs.existsSync("./data/abcd"));
+			const result = fs.existsSync("./data/abcd");
+			return expect(result).to.be.true;
 		});
 
-		it("should accept a valid ID and return the array of ID's with the valid ID contained"
-			, async function () {
-				const result = await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
-				console.log(result);
-				return expect(result).to.have.deep.members(["sections"]);
-			});
-		it("should add multiple datasets with valid IDs that are different and return the array with ids",
-			async function () {
-				await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
-				await facade.addDataset("id1", courses, InsightDatasetKind.Sections);
-				await facade.addDataset("id2", courses, InsightDatasetKind.Sections);
-				const result = await facade.addDataset("courses", courses, InsightDatasetKind.Sections);
-				return expect(result).to.have.deep.members(["sections", "id1", "id2", "courses"]);
-			});
+		it("should accept a valid ID and return the array of ID's with the valid ID contained", async function () {
+			const result = await facade.addDataset("sections", courses, InsightDatasetKind.Sections);
+			console.log(result);
+			return expect(result).to.have.deep.members(["sections"]);
+		});
+
+		it("should add multi datasets with valid IDs that are diff and return the array with ids", async function () {
+			await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
+			await facade.addDataset("id1", courses, InsightDatasetKind.Sections);
+			await facade.addDataset("id2", courses, InsightDatasetKind.Sections);
+			const result = await facade.addDataset("courses", courses, InsightDatasetKind.Sections);
+			return expect(result).to.have.deep.members(["sections", "id1", "id2", "courses"]);
+		});
 
 		// TESTS FOR REMOVE
 		it("should remove a dataset that has been added and is valid", async function () {
@@ -199,22 +229,22 @@ describe("InsightFacade", function () {
 		// LIST DATASET methods
 		it("should list one dataset if added correctly", async function () {
 			await facade.addDataset("sections", sections, InsightDatasetKind.Sections);
-			const expected: InsightDataset[] = [{
-				id: "sections",
-				kind: InsightDatasetKind.Sections,
-				numRows: 64612
-			}
+			const expected: InsightDataset[] = [
+				{
+					id: "sections",
+					kind: InsightDatasetKind.Sections,
+					numRows: 64612,
+				},
 			];
 			const result = facade.listDatasets();
 			return expect(result).to.eventually.have.deep.members(expected);
-
 		});
 		it("should list an empty array if there are no datasets added", function () {
 			const result = facade.listDatasets();
 			return expect(result).to.eventually.have.deep.members([]);
 		});
-
 	});
+
 
 	/*
 	 * This test suite dynamically generates tests from the JSON files in test/resources/queries.
