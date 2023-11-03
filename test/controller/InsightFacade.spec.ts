@@ -17,7 +17,6 @@ import * as fs from "fs-extra";
 use(chaiAsPromised);
 
 describe("InsightFacade", function () {
-
 	let facade: IInsightFacade;
 
 	// Declare datasets used in tests. You should add more datasets like this!
@@ -245,7 +244,6 @@ describe("InsightFacade", function () {
 		});
 	});
 
-
 	/*
 	 * This test suite dynamically generates tests from the JSON files in test/resources/queries.
 	 * You should not need to modify it; instead, add additional files to the queries directory.
@@ -259,8 +257,10 @@ describe("InsightFacade", function () {
 
 			// Load the datasets specified in datasetsToQuery and add them to InsightFacade.
 			// Will *fail* if there is a problem reading ANY dataset.
-			const loadDatasetPromises = [facade.addDataset("sections", sections, InsightDatasetKind.Sections),
-				facade.addDataset("rooms", rooms, InsightDatasetKind.Rooms)];
+			const loadDatasetPromises = [
+				facade.addDataset("sections", sections, InsightDatasetKind.Sections),
+				facade.addDataset("rooms", rooms, InsightDatasetKind.Rooms),
+			];
 
 			return Promise.all(loadDatasetPromises); // review
 			// const loadDataset = facade.addDataset("sections", sections, InsightDatasetKind.Sections);

@@ -99,12 +99,20 @@ export class DataSetManager {
 
 	public static identifierSwitch(obj: any): DatasetSection {
 		let year: number;
-		year = (obj.Section === "overall") ? 1900 : Number(obj.Year);
-		return new DatasetSection(String(obj.id) || "", obj.Course || "", obj.Title || "",
-			obj.Professor || "", obj.Subject || "", year || 0, obj.Avg || 0,
-			obj.Pass || 0, obj.Fail || 0, obj.Audit || 0);
+		year = obj.Section === "overall" ? 1900 : Number(obj.Year);
+		return new DatasetSection(
+			String(obj.id) || "",
+			obj.Course || "",
+			obj.Title || "",
+			obj.Professor || "",
+			obj.Subject || "",
+			year || 0,
+			obj.Avg || 0,
+			obj.Pass || 0,
+			obj.Fail || 0,
+			obj.Audit || 0
+		);
 	}
-
 }
 export class DatasetElement {}
 export class DatasetSection extends DatasetElement {

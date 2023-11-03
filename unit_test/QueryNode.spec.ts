@@ -185,12 +185,12 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {
 				IS: {
-					rooms_furniture: "Table"
-				}
+					rooms_furniture: "Table",
+				},
 			},
 			OPTIONS: {
-				COLUMNS: ["rooms_shortname", "rooms_number", "rooms_furniture"]
-			}
+				COLUMNS: ["rooms_shortname", "rooms_number", "rooms_furniture"],
+			},
 		};
 		const result = new QueryNode(query, "rooms");
 		expect(result.validate()).to.be.true;
@@ -199,12 +199,12 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {
 				IS: {
-					rooms_furniture: "*Table*"
-				}
+					rooms_furniture: "*Table*",
+				},
 			},
 			OPTIONS: {
-				COLUMNS: ["rooms_shortname", "rooms_number", "rooms_furniture"]
-			}
+				COLUMNS: ["rooms_shortname", "rooms_number", "rooms_furniture"],
+			},
 		};
 		const result = new QueryNode(query, "rooms");
 		expect(result.validate()).to.be.true;
@@ -213,12 +213,12 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {
 				IS: {
-					sections_dept: "cpsc"
-				}
+					sections_dept: "cpsc",
+				},
 			},
 			OPTIONS: {
-				COLUMNS: ["rooms_shortname", "rooms_number"]
-			}
+				COLUMNS: ["rooms_shortname", "rooms_number"],
+			},
 		};
 		const result = new QueryNode(query, "rooms");
 		expect(result.validate()).to.be.false;
@@ -230,16 +230,18 @@ describe("Test suite for C2 for QueryNode", function () {
 			WHERE: {},
 			OPTIONS: {
 				COLUMNS: ["sections_dept", "avgGrade"],
-				ORDER: "avgGrade"
+				ORDER: "avgGrade",
 			},
 			TRANSFORMATIONS: {
 				GROUP: ["sections_dept"],
-				APPLY: [{
-					avgGrade: {
-						AVG: "sections_avg"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						avgGrade: {
+							AVG: "sections_avg",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.true;
@@ -252,40 +254,48 @@ describe("Test suite for C2 for QueryNode", function () {
 			},
 			TRANSFORMATIONS: {
 				GROUP: ["sections_dept"],
-				APPLY: [{
-					avgGrade: {
-						AVG: "sections_avg"
-					}
-				}, {
-					avgGrade: {
-						MAX: "sections_avg"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						avgGrade: {
+							AVG: "sections_avg",
+						},
+					},
+					{
+						avgGrade: {
+							MAX: "sections_avg",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		const answer = result.validate();
 		expect(answer).to.be.false;
 	});
-	it("Test for an invalid query where the COLUMNS keys do not correspond to one of the GROUP keys or " +
-		"to applykeys defined in the APPLY block", function () {
-		const query = {
-			WHERE: {},
-			OPTIONS: {
-				COLUMNS: ["sections_dept", "someRandomKey"],
-			},
-			TRANSFORMATIONS: {
-				GROUP: ["sections_dept"],
-				APPLY: [{
-					avgGrade: {
-						AVG: "sections_avg"
-					}
-				}]
-			}
-		};
-		const result = new QueryNode(query, "sections");
-		expect(result.validate()).to.be.false;
-	});
+	it(
+		"Test for an invalid query where the COLUMNS keys do not correspond to one of the GROUP keys or " +
+			"to applykeys defined in the APPLY block",
+		function () {
+			const query = {
+				WHERE: {},
+				OPTIONS: {
+					COLUMNS: ["sections_dept", "someRandomKey"],
+				},
+				TRANSFORMATIONS: {
+					GROUP: ["sections_dept"],
+					APPLY: [
+						{
+							avgGrade: {
+								AVG: "sections_avg",
+							},
+						},
+					],
+				},
+			};
+			const result = new QueryNode(query, "sections");
+			expect(result.validate()).to.be.false;
+		}
+	);
 	it("Test for an invalid query where a non-numeric key is used with MAX, MIN, AVG, or SUM", function () {
 		const query = {
 			WHERE: {},
@@ -294,12 +304,14 @@ describe("Test suite for C2 for QueryNode", function () {
 			},
 			TRANSFORMATIONS: {
 				GROUP: ["sections_dept"],
-				APPLY: [{
-					maxName: {
-						MAX: "sections_instructor"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						maxName: {
+							MAX: "sections_instructor",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -312,12 +324,14 @@ describe("Test suite for C2 for QueryNode", function () {
 			},
 			TRANSFORMATIONS: {
 				GROUP: ["sections_dept"],
-				APPLY: [{
-					nameCount: {
-						COUNT: "sections_instructor"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						nameCount: {
+							COUNT: "sections_instructor",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.true;
@@ -327,8 +341,8 @@ describe("Test suite for C2 for QueryNode", function () {
 			WHERE: {},
 			OPTIONS: {
 				COLUMNS: ["sections_avg"],
-				ORDER: "sections_avg"
-			}
+				ORDER: "sections_avg",
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.true;
@@ -341,9 +355,9 @@ describe("Test suite for C2 for QueryNode", function () {
 				COLUMNS: ["sections_dept", "sections_avg"],
 				ORDER: {
 					dir: "UP",
-					keys: ["sections_dept", "sections_avg"]
-				}
-			}
+					keys: ["sections_dept", "sections_avg"],
+				},
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.true;
@@ -354,8 +368,8 @@ describe("Test suite for C2 for QueryNode", function () {
 			WHERE: {},
 			OPTIONS: {
 				COLUMNS: ["sections_dept"],
-				ORDER: "sections_avg"
-			}
+				ORDER: "sections_avg",
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -364,21 +378,23 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {
 				GT: {
-					sections_avg: 90
-				}
+					sections_avg: 90,
+				},
 			},
 			OPTIONS: {
 				COLUMNS: ["sections_dept", "avgGrade"],
-				ORDER: "avgGrade"
+				ORDER: "avgGrade",
 			},
 			TRANSFORMATIONS: {
 				GROUP: ["sections_dept"],
-				APPLY: [{
-					avgGrade: {
-						AVG: "sections_avg"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						avgGrade: {
+							AVG: "sections_avg",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.true;
@@ -388,21 +404,23 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {
 				GT: {
-					sections_avg: 90
-				}
+					sections_avg: 90,
+				},
 			},
 			OPTIONS: {
 				COLUMNS: ["sections_dept", "avgGrade", "someRandomKey"],
-				ORDER: "someRandomKey"
+				ORDER: "someRandomKey",
 			},
 			TRANSFORMATIONS: {
 				GROUP: ["sections_dept"],
-				APPLY: [{
-					avgGrade: {
-						AVG: "sections_avg"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						avgGrade: {
+							AVG: "sections_avg",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -411,9 +429,9 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
+				COLUMNS: ["sections_dept", "sections_avg"],
 			},
-			TRANSFORMATIONS: {}
+			TRANSFORMATIONS: {},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -423,16 +441,18 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "avgGrade"]
+				COLUMNS: ["sections_dept", "avgGrade"],
 			},
 			TRANSFORMATIONS: {
 				GROUP: [],
-				APPLY: [{
-					avgGrade: {
-						AVG: "sections_avg"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						avgGrade: {
+							AVG: "sections_avg",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -442,12 +462,12 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
+				COLUMNS: ["sections_dept", "sections_avg"],
 			},
 			TRANSFORMATIONS: {
 				GROUP: ["sections_dept"],
-				APPLY: []
-			}
+				APPLY: [],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -457,11 +477,11 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "sections_avg"]
+				COLUMNS: ["sections_dept", "sections_avg"],
 			},
 			TRANSFORMATIONS: {
-				GROUP: ["sections_dept"]
-			}
+				GROUP: ["sections_dept"],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -471,15 +491,17 @@ describe("Test suite for C2 for QueryNode", function () {
 		const query = {
 			WHERE: {},
 			OPTIONS: {
-				COLUMNS: ["sections_dept", "avgGrade"]
+				COLUMNS: ["sections_dept", "avgGrade"],
 			},
 			TRANSFORMATIONS: {
-				APPLY: [{
-					avgGrade: {
-						AVG: "sections_avg"
-					}
-				}]
-			}
+				APPLY: [
+					{
+						avgGrade: {
+							AVG: "sections_avg",
+						},
+					},
+				],
+			},
 		};
 		const result = new QueryNode(query, "sections");
 		expect(result.validate()).to.be.false;
@@ -490,14 +512,102 @@ describe("QueryNode Evaluation Tests", function () {
 	it("should correctly evaluate a query with GROUP and APPLY", function () {
 		// Given dataset
 		const dataset: DatasetSection[] = [
-			{ uuid: "1", instructor: "Jean",  avg: 90, title : "310", id: "1", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10},
-			{ uuid: "2", instructor: "Jean",  avg: 80, title : "310", id: "2", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10},
-			{ uuid: "3", instructor: "Casey", avg: 95, title : "310", id: "3", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10},
-			{ uuid: "4", instructor: "Casey", avg: 85, title : "310", id: "4", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10},
-			{ uuid: "5", instructor: "Kelly", avg: 74, title : "210", id: "5", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10},
-			{ uuid: "6", instructor: "Kelly", avg: 78, title : "210", id: "6", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10},
-			{ uuid: "7", instructor: "Kelly", avg: 72, title: "210", id: "7", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10},
-			{ uuid: "8", instructor: "Eli",   avg: 85, title : "210", id: "8", dept: "cpsc", year: 2018, pass: 50, fail: 50, audit: 10}
+			{
+				uuid: "1",
+				instructor: "Jean",
+				avg: 90,
+				title: "310",
+				id: "1",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
+			{
+				uuid: "2",
+				instructor: "Jean",
+				avg: 80,
+				title: "310",
+				id: "2",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
+			{
+				uuid: "3",
+				instructor: "Casey",
+				avg: 95,
+				title: "310",
+				id: "3",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
+			{
+				uuid: "4",
+				instructor: "Casey",
+				avg: 85,
+				title: "310",
+				id: "4",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
+			{
+				uuid: "5",
+				instructor: "Kelly",
+				avg: 74,
+				title: "210",
+				id: "5",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
+			{
+				uuid: "6",
+				instructor: "Kelly",
+				avg: 78,
+				title: "210",
+				id: "6",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
+			{
+				uuid: "7",
+				instructor: "Kelly",
+				avg: 72,
+				title: "210",
+				id: "7",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
+			{
+				uuid: "8",
+				instructor: "Eli",
+				avg: 85,
+				title: "210",
+				id: "8",
+				dept: "cpsc",
+				year: 2018,
+				pass: 50,
+				fail: 50,
+				audit: 10,
+			},
 		];
 
 		const datasetObject: DataSet = {
@@ -509,24 +619,26 @@ describe("QueryNode Evaluation Tests", function () {
 
 		// Given query
 		const query = {
-			"WHERE": {},
-			"OPTIONS": {
-				"COLUMNS": ["sections_title", "overallAvg"]
+			WHERE: {},
+			OPTIONS: {
+				COLUMNS: ["sections_title", "overallAvg"],
 			},
-			"TRANSFORMATIONS": {
-				"GROUP": ["sections_title"],
-				"APPLY": [{
-					"overallAvg": {
-						"AVG": "sections_avg"
-					}
-				}]
-			}
+			TRANSFORMATIONS: {
+				GROUP: ["sections_title"],
+				APPLY: [
+					{
+						overallAvg: {
+							AVG: "sections_avg",
+						},
+					},
+				],
+			},
 		};
 
 		// Expected result
 		const expectedResults = [
-			{ "sections_title" : "310", "overallAvg": 87.5},
-			{ "sections_title" : "210", "overallAvg": 77.25}
+			{sections_title: "310", overallAvg: 87.5},
+			{sections_title: "210", overallAvg: 77.25},
 		];
 
 		// Evaluate
@@ -537,4 +649,3 @@ describe("QueryNode Evaluation Tests", function () {
 		expect(results).to.deep.equal(expectedResults);
 	});
 });
-

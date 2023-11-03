@@ -37,7 +37,8 @@ export class ApplyProcessor {
 			const groupKeyValues = groupKey.split("_");
 
 			this.groupKeys.forEach((key: string, index: number) => {
-				if (index < groupKeyValues.length) { // Ensure we don't go out of bounds
+				if (index < groupKeyValues.length) {
+					// Ensure we don't go out of bounds
 					aggregatedResult[key] = groupKeyValues[index];
 				}
 			});
@@ -47,7 +48,7 @@ export class ApplyProcessor {
 				const token = Object.keys(applyRule[applyKey])[0];
 				const key = applyRule[applyKey][token];
 
-				switch(token) {
+				switch (token) {
 					case "MAX":
 						aggregatedResult[applyKey] = this.max(group, key);
 						break;
@@ -163,5 +164,4 @@ export class ApplyProcessor {
 		}
 		return key;
 	}
-
 }

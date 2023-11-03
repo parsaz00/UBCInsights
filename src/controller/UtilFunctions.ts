@@ -29,9 +29,18 @@ export async function processFiles(fileContents: Map<string, string>, schema: an
 					const isValid = DataSetManager.validateAgainstSchema(jsonObject, schema);
 					if (isValid) {
 						const section = new TempSection(
-							jsonObject.id, jsonObject.Course, jsonObject.Title, jsonObject.Professor,
-							jsonObject.Subject, jsonObject.Year, jsonObject.Avg, jsonObject.Pass, jsonObject.Fail,
-							jsonObject.Audit, jsonObject.Section);
+							jsonObject.id,
+							jsonObject.Course,
+							jsonObject.Title,
+							jsonObject.Professor,
+							jsonObject.Subject,
+							jsonObject.Year,
+							jsonObject.Avg,
+							jsonObject.Pass,
+							jsonObject.Fail,
+							jsonObject.Audit,
+							jsonObject.Section
+						);
 						const updatedSection = DataSetManager.identifierSwitch(section);
 						dataset.section.push(updatedSection);
 					} else {
