@@ -1,7 +1,7 @@
 import {InsightError} from "./IInsightFacade";
 import Decimal from "decimal.js";
 
-
+// CITATION: ChatGPT was used to help with big-picture logic and structure of this class
 // ApplyProcessor class: Used to process APPLY rules on grouped data
 export class ApplyProcessor {
 	private groupedData: Map<string, any[]>; // each key represents a unique combo of group key values

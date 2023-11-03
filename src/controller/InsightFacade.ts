@@ -1,36 +1,38 @@
-// Citation: Used ChatGPT for suggestions on to why previous commit had timeout issues. Pointed out that we were
-// 			 unnecessarily writing to disk twice, and so, we changed unzipZipFileFromString and processFromFile. It
-// 			 suggested using a datastructure to hold the unzipped data from processing, so we could process from memory
-// 			 as such, we decided to use a map to store unzipped data, process it, then store it disk to speed up the process
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, NotFoundError,
+// Citation: Used ChatGPT for suggestions
+import {
+	IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, NotFoundError,
 	ResultTooLargeError,
 } from "./IInsightFacade";
-import {DataSet, DataSetManager, DatasetSection, TempSection} from "./DataSet";
+import {unzipZipFileFromString, processFiles, writeToJsonFile, deleteFile} from "./UtilFunctions";
+import {DataSet, DataSetManager, DatasetRoom, TempSection} from "./DataSet";
 import * as fs from "fs-extra";
 import JSZip from "jszip";
+import * as Parse5 from "parse5";
 import {QueryNode} from "./QueryNode";
+import {RoomProcessing} from "./RoomProcessing";
+
 const dataSetFolder = "./data";
-/**
- * This is the main programmatic entry point for the project.
- * Method documentation is in IInsightFacade
- */
 const Schema = {
 	type: "object",
-	properties: {id: {type: "number"}, Course: {type: "string"}, Title: {type: "string"}, Professor: {type: "string"},
+	properties: {
+		id: {type: "number"}, Course: {type: "string"}, Title: {type: "string"}, Professor: {type: "string"},
 		Subject: {type: "string"}, Year: {type: "string"}, Avg: {type: "number"}, Pass: {type: "number"},
-		Fail: {type: "number"}, Audit: {type: "number"},},
+		Fail: {type: "number"}, Audit: {type: "number"},
+	},
 	required: ["id", "Course", "Title", "Professor", "Subject", "Year", "Avg", "Pass", "Fail", "Audit"],
 };
 export default class InsightFacade implements IInsightFacade {
 	private datasetmap = new DataSetManager();
 	private datasetsLoaded: boolean = false; // see citation for ensureDatasetsLoaded
+	private geoCache: Record<string, any> = {};
+
 	constructor() {
 		console.log("InsightFacadeImpl::init()");
 	}
-	// citation: Used GPT to get idea for this approach. suggested using a method in tandem with a boolean member
-	// 			 to ensure that datasets are loaded before any method is called
 
-	public ensureDatasetsLoaded(): void {
+	// citation: Used GPT to get idea for this approach. suggested using a method in tandem with a boolean member
+
+	private ensureDatasetsLoaded(): void {
 		if (!this.datasetsLoaded) {
 			try {
 				fs.ensureDirSync(dataSetFolder);
@@ -48,41 +50,101 @@ export default class InsightFacade implements IInsightFacade {
 		}
 	}
 
+	private validateDatasetId(id: string): boolean {
+		const regex = /\S/;
+		return regex.test(id) && !id.includes("_") && !this.datasetmap.map.has(id);
+	}
+
+	private validateContent(content: string): boolean {
+		return content.length !== 0;
+	}
+
+	// Citation: Refactoring done with the help of Chat GPT
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
 		this.ensureDatasetsLoaded();
-		if (!isNotEmptyOrWhitespace(id)) {
-			return Promise.reject(new InsightError("ID cannot be whitespace"));
+		if (!this.validateDatasetId(id) || !this.validateContent(content)) {
+			return Promise.reject(new InsightError("Invalid input"));
 		}
-		if (id.includes("_")) {
-			return Promise.reject(new InsightError("ID cannot include underscore _"));
+		const tempDataSet: DataSet = new DataSet(id, [], kind, 0);
+		const {decodedString, fileContents} = await this.extracted(content);
+		if (kind === InsightDatasetKind.Sections) {
+			await processFiles(fileContents, Schema, tempDataSet);
+		} else if (kind === InsightDatasetKind.Rooms) {
+			const zip = await JSZip.loadAsync(decodedString);
+			const indexFile = zip.file("index.htm");
+			if (!indexFile) {
+				return Promise.reject(new InsightError("htm file not found"));
+			}
+			const indexContent = await indexFile.async("string");
+			if (!indexContent) {
+				return Promise.reject(new InsightError("htm file content is empty or unreadable"));
+			}
+			if (!indexContent) {
+				return Promise.reject(new InsightError("htm file not found"));
+			}
+			const indexDocument = Parse5.parse(indexContent);
+			await this.processRooms(zip, indexDocument, tempDataSet);
+		} else {
+			return Promise.reject(new InsightError("Invalid kind"));
 		}
-		if (this.datasetmap.map.has(id)) {
-			return Promise.reject(new InsightError("Duplicated id is not allowed, pick new id"));
+		tempDataSet.numRows = tempDataSet.section.length;
+		this.datasetmap.map.set(id, tempDataSet);
+		await this.saveDatasetToFile(tempDataSet);
+		return Promise.resolve(Array.from(this.datasetmap.map.keys()));
+	}
+
+	// Citation: Refactoring done with the help of Chat GPT
+	private async processRooms(zip: JSZip, indexDocument: any, dataset: DataSet) {
+		const buildingTable = RoomProcessing.findBuildingTable(indexDocument) ||
+			await Promise.reject(new InsightError("Building table not found"));
+		const buildingLinks = RoomProcessing.getBuildingLinks(buildingTable);
+		await this.getGeolocations(buildingLinks);
+		await Promise.all(buildingLinks.map(this.processBuildingLink.bind(this, zip, dataset)));
+	}
+
+	// Citation: Refactoring done with the help of Chat GPT
+	private async processBuildingLink(zip: JSZip, dataset: DataSet, link: any) {
+		const buildingFile = zip.file(link.href.substring(2));
+		if (!buildingFile) {
+			return;
 		}
-		if (content.length === 0) {
-			return Promise.reject(new InsightError("Rejected because content is empty"));
+		const buildingContent = await buildingFile.async("string");
+		const buildingDocument = Parse5.parse(buildingContent);
+		const roomsTable = RoomProcessing.findRoomTable(buildingDocument);
+		if (!roomsTable) {
+			return;
 		}
-		let tempDataSet: DataSet = new DataSet(id, [], kind, 0);
+		RoomProcessing.getRows(roomsTable).forEach(this.processRow.bind(this, dataset, link));
+	}
+
+	private processRow(dataset: DataSet, link: any, row: any) {
+		const geoResponse = this.geoCache[link.address];
+		if (!geoResponse || geoResponse.error) {
+			return;
+		}
+		dataset.section.push(new DatasetRoom(link.fullname, link.shortname, row.number,
+			`${link.shortname}_${row.number}`, link.address, geoResponse.lat, geoResponse.lon,
+			row.seats, row.type, row.furniture, row.href));
+	}
+
+	private async extracted(content: string) {
 		const decodedBuffer = Buffer.from(content, "base64");
 		const decodedString = decodedBuffer.toString("binary");
 		const fileContents = await unzipZipFileFromString(decodedString);
-		await processFiles(fileContents, Schema, tempDataSet);
-		this.datasetmap.map.set(id, tempDataSet);
-		const keysIterator = this.datasetmap.map.keys();
-		let keysArray = Array.from(keysIterator);
-		const jsonString = global.JSON.stringify(tempDataSet, null, 2);
-		const patha = dataSetFolder + "/" + id;
-		await writeToJsonFile(patha, jsonString);
-		tempDataSet.numRows = tempDataSet.section.length;
-		return Promise.resolve(keysArray);
+		return {decodedString, fileContents};
+	}
+
+	private async saveDatasetToFile(dataset: DataSet) {
+		const jsonString = global.JSON.stringify(dataset, null, 2);
+		const filePath = `${dataSetFolder}/${dataset.id}`;
+		await writeToJsonFile(filePath, jsonString);
+		dataset.numRows = dataset.section.length;
 	}
 
 	public removeDataset(id: string): Promise<string> {
 		this.ensureDatasetsLoaded();
-		if (!isNotEmptyOrWhitespace(id)) {
-			return Promise.reject(new InsightError("Invalid id"));
-		}
-		if (id.includes("_")) {
+		const regex = /\S/;
+		if (!regex.test(id) || id.includes("_")) {
 			return Promise.reject(new InsightError("Invalid id"));
 		}
 		if (!this.datasetmap.map.has(id)) {
@@ -112,11 +174,10 @@ export default class InsightFacade implements IInsightFacade {
 
 	public performQuery(query: unknown): Promise<InsightResult[]> {
 		this.ensureDatasetsLoaded();
-		// Step 1: Ensure that the query is an object
 		if (typeof query !== "object" || query === null) {
 			return Promise.reject(new InsightError("Query must be a valid object"));
 		}
-		const dataSetID = this.getDataSetID(query);
+		const dataSetID = DataSetManager.getDataSetID(query);
 		let queryNode: QueryNode;
 		try {
 			queryNode = new QueryNode(query as any, dataSetID);
@@ -126,175 +187,33 @@ export default class InsightFacade implements IInsightFacade {
 		} catch (error) {
 			return Promise.reject(new InsightError("Invalid query"));
 		}
-		const dataset = this.getDataset(dataSetID);
-		let results: InsightResult[];
 		try {
+			const dataset = DataSetManager.getDataset(dataSetID, this.datasetmap.map);
+			let results: InsightResult[];
 			results = queryNode.evaluate(dataset);
-		} catch (error) {
-			if (error instanceof ResultTooLargeError) {
-				return Promise.reject(error);
+			if (results.length > 5000) {
+				return Promise.reject(new ResultTooLargeError("More than 5000 results found"));
 			}
-			return Promise.reject(new InsightError("Error evaluating the query"));
+			return Promise.resolve(results);
+		} catch (error) {
+			return Promise.reject(new InsightError("Dataset not found"));
 		}
-		if (results.length > 5000) {
-			return Promise.reject(new ResultTooLargeError("More than 5000 results found"));
-		}
-		return Promise.resolve(results);
 	}
 
-	private extractDatasetIDFromQuery(query: any): string | null {
-		let datasetID = this.extractFromWhere(query);
-		if (datasetID) {
-			return datasetID;
-		}
-		return this.extractFromOptions(query);
-	}
-
-	// Citation: Chat GPT used to help create the logic and implementation for this method and extractFromOptions
-	private extractFromWhere(query: any): string | null {
-		if (query && query.WHERE) {
-			for (let condition in query.WHERE) {
-				const value = query.WHERE[condition];
-				if (typeof value === "object" && !Array.isArray(value)) {
-					const field = Object.keys(value)[0];
-					const parts = field.split("_");
-					if (parts.length > 1) {
-						return parts[0];
-					}
-					// Handle NOT filter
-					if (condition === "NOT") {
-						return this.extractDatasetIDFromQuery({WHERE: value});
-					}
-				} else if (Array.isArray(value)) {
-					for (let subCondition of value) {
-						const id = this.extractDatasetIDFromQuery({WHERE: subCondition});
-						if (id) {
-							return id;
-						}
-					}
+	private async getGeolocations(buildingLinks: any[]): Promise<void> {
+		const requests = buildingLinks.map(async (link) => {
+			if (!this.geoCache[link.address]) {
+				const encodedAddress = encodeURIComponent(link.address);
+				const url = `http://cs310.students.cs.ubc.ca:11316/api/v1/project_team127/${encodedAddress}`;
+				try {
+					const response = await fetch(url); // adding timeout
+					this.geoCache[link.address] = await response.json();
+				} catch (error) {
+					console.error(`Failed to get geolocation for address: ${link.address}`, error);
+					this.geoCache[link.address] = null; // cache the failure, so we don’t retry
 				}
 			}
-		}
-		return null;
-	}
-
-	private extractFromOptions(query: any): string | null {
-		if (query && query.OPTIONS && query.OPTIONS.COLUMNS) {
-			for (let column of query.OPTIONS.COLUMNS) {
-				const parts = column.split("_");
-				if (parts.length > 1) {
-					return parts[0];
-				}
-			}
-		}
-		return null;
-	}
-
-	private getDataSetID(query: any): string {
-		return this.extractDatasetIDFromQuery(query) || "";
-	}
-
-	private getDataset(dataSetID: string): DataSet {
-		const dataset = this.datasetmap.map.get(dataSetID);
-		if (!dataset) {
-			throw new InsightError(`Dataset was not found for ID: ${dataSetID}`);
-		}
-		return dataset;
-	}
-}
-function isNotEmptyOrWhitespace(input: string): boolean {
-	const regex = /\S/;
-	return regex.test(input);
-}
-// Citation: function below generated with help of ChatGPT
-async function unzipZipFileFromString(zipFileContent: string): Promise<Map<string, string>> {
-	const fileContents = new Map<string, string>();
-	const jszip = new JSZip();
-	const zip = await jszip.loadAsync(zipFileContent);
-	await Promise.all(
-		Object.keys(zip.files).map(async (fileName) => {
-			if (!zip.files[fileName].dir) {
-				const fileData = await zip.files[fileName].async("string");
-				fileContents.set(fileName, fileData);
-			}
-		})
-	);
-	return fileContents;
-}
-// Citation: function below generated with help of ChatGPT
-function validateAgainstSchema(jsonData: any, schema: any): boolean {
-	const {properties, required} = schema;
-	for (const key of required) {
-		if (!(key in jsonData)) {
-			console.error(`Missing required property: ${key}`);
-			return false; // Required property is missing
-		}
-		const propertySchema = properties[key];
-		if (propertySchema.type === "string" && typeof jsonData[key] !== "string") {
-			return false; // Property is not of type string
-		}
-		if (propertySchema.type === "number" && typeof jsonData[key] !== "number") {
-			return false; // Property is not of type number
-		}
-	}
-	return true; // Validation passed
-}
-// Citation: the next three functions below generated with help of ChatGPT
-function identifierSwitch(obj: any): DatasetSection {
-	let year: number;
-	if (obj.Section === "overall") {
-		year = 1900;
-	} else {
-		year = Number(obj.Year);
-	}
-	return new DatasetSection(String(obj.id) || "", obj.Course || "", obj.Title || "",
-		obj.Professor || "", obj.Subject || "", year || 0, obj.Avg || 0, obj.Pass || 0,
-		obj.Fail || 0, obj.Audit || 0);
-}
-async function processFiles(fileContents: Map<string, string>, schema: any, dataset: DataSet) {
-	for (const [fileName, data] of fileContents.entries()) {
-		try {
-			const jsonArray = global.JSON.parse(data);
-			if (Array.isArray(jsonArray.result)) {
-				jsonArray.result.forEach((jsonObject: any) => {
-					const isValid = validateAgainstSchema(jsonObject, schema);
-					if (isValid) {
-						const section = new TempSection(jsonObject.id, jsonObject.Course, jsonObject.Title,
-							jsonObject.Professor, jsonObject.Subject, jsonObject.Year, jsonObject.Avg, jsonObject.Pass,
-							jsonObject.Fail, jsonObject.Audit, jsonObject.Section);
-						const updatedSection = identifierSwitch(section);
-						dataset.section.push(updatedSection);
-					} else {
-						console.error(`JSON data in file ${fileName} is not valid. Skipping invalid entry.`);
-					}
-				});
-			} else {
-				console.error(`JSON data in file ${fileName} is not an array. Skipping file.`);
-			}
-		} catch (error) {
-			console.error(`Error processing JSON file ${fileName}:`, error);
-		}
-	}
-}
-async function writeToJsonFile(filePath: string, data: string) {
-	try {
-		const dir = filePath.substring(0, filePath.lastIndexOf("/"));
-		console.log("dir in wrtieToJsonFile is: ", dir);
-		console.log("file path is:", filePath);
-		await fs.ensureDir(dir);
-		await fs.writeFile(filePath, data, "utf8");
-		console.log("Data written to ${filePath}");
-	} catch (error) {
-		console.error("Error writing to ${filePath}:", error);
-		return Promise.reject(new InsightError("Invalid writing path"));
-	}
-}
-async function deleteFile(filePath: string): Promise<void> {
-	try {
-		await fs.unlink(filePath);
-		console.log(`File ${filePath} deleted successfully.`);
-	} catch (error) {
-		console.error(`Error deleting file ${filePath}:`, error);
-		return Promise.reject(new InsightError("Invalid deleting path"));
+		});
+		await Promise.all(requests);
 	}
 }
