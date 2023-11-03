@@ -58,5 +58,3 @@ export class GroupingProcessor {
 		return key;
 	}
 }
-
-

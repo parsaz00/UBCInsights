@@ -29,8 +29,12 @@ export class QueryNode {
 		}
 		this.dataSetID = dataSetID;
 		this.whereNode = new WhereNode(query.WHERE, this.dataSetID);
-		this.optionNode = new OptionNode(query.OPTIONS, this.dataSetID
-			, query.TRANSFORMATIONS?.GROUP, query.TRANSFORMATIONS?.APPLY);
+		this.optionNode = new OptionNode(
+			query.OPTIONS,
+			this.dataSetID,
+			query.TRANSFORMATIONS?.GROUP,
+			query.TRANSFORMATIONS?.APPLY
+		);
 	}
 
 	/**
@@ -68,5 +72,3 @@ export class QueryNode {
 		return this.optionNode.evaluate(filteredResults);
 	}
 }
-
-

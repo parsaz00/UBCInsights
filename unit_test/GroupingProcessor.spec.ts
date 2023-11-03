@@ -10,9 +10,9 @@ describe("test suite for GroupingProcessor", function () {
 	beforeEach(function () {
 		// Sample dataset for testing
 		dataset = [
-			{ "id": 1, "dept": "CS", "course": "310" },
-			{ "id": 2, "dept": "CS", "course": "310" },
-			{ "id": 3, "dept": "MATH", "course": "200" }
+			{id: 1, dept: "CS", course: "310"},
+			{id: 2, dept: "CS", course: "310"},
+			{id: 3, dept: "MATH", course: "200"},
 		];
 		groupKeys = ["dept", "course"];
 	});
@@ -35,7 +35,6 @@ describe("test suite for GroupingProcessor", function () {
 		expect(() => processor.groupByKeys()).to.throw(InsightError, "Invalid group key: nonexistentKey");
 	});
 
-
 	it("Should group by single key", function () {
 		const singleKey = ["dept"];
 		const processor = new GroupingProcessor(dataset, singleKey);
@@ -44,10 +43,7 @@ describe("test suite for GroupingProcessor", function () {
 		expect(result.get("MATH")?.length).to.equal(1);
 	});
 	it("Should group records with same group key values but different other values", function () {
-		const extendedDataset = [
-			...dataset,
-			{ "id": 4, "dept": "CS", "course": "310", "instructor": "John" }
-		];
+		const extendedDataset = [...dataset, {id: 4, dept: "CS", course: "310", instructor: "John"}];
 		const processor = new GroupingProcessor(extendedDataset, groupKeys);
 		const result = processor.groupByKeys();
 		expect(result.get("CS_310")?.length).to.equal(3);
@@ -60,10 +56,7 @@ describe("test suite for GroupingProcessor", function () {
 	});
 
 	it("Should group duplicate dataset records correctly", function () {
-		const duplicateDataset = [
-			...dataset,
-			{ "id": 1, "dept": "CS", "course": "310" }
-		];
+		const duplicateDataset = [...dataset, {id: 1, dept: "CS", course: "310"}];
 		const processor = new GroupingProcessor(duplicateDataset, groupKeys);
 		const result = processor.groupByKeys();
 		expect(result.get("CS_310")?.length).to.equal(3);
@@ -77,12 +70,11 @@ describe("test suite for GroupingProcessor", function () {
 
 	it("Should throw error for dataset records missing some group keys", function () {
 		const incompleteDataset = [
-			{ "id": 1, "dept": "CS" },
-			{ "id": 2, "course": "310" },
-			{ "id": 3, "dept": "MATH", "course": "200" }
+			{id: 1, dept: "CS"},
+			{id: 2, course: "310"},
+			{id: 3, dept: "MATH", course: "200"},
 		];
 		const processor = new GroupingProcessor(incompleteDataset, groupKeys);
 		expect(() => processor.groupByKeys()).to.throw(InsightError); // The error message can be more specific if needed
 	});
-
 });

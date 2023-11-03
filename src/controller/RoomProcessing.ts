@@ -2,8 +2,6 @@
 // CITATION: Refactoring into this class was assisted by CHAT GPT. The below methods were aided by Chat GPT in figuring
 //           out initial logic and high-level implementation
 export class RoomProcessing {
-
-
 	public static findBuildingTable(document: any): any {
 		return RoomProcessing.findTableByClass(document, "views-field views-field-field-building-address");
 	}
@@ -71,7 +69,11 @@ export class RoomProcessing {
 				const href = hrefCell ? this.getHref(this.findNodeByName(hrefCell, "a")) : "";
 				if (number !== null && seats !== null && furniture !== null && type !== null && href !== null) {
 					rowsData.push({
-						number, seats, furniture, type, href,
+						number,
+						seats,
+						furniture,
+						type,
+						href,
 					});
 				}
 			}
@@ -80,9 +82,11 @@ export class RoomProcessing {
 	}
 
 	public static findNodeByClass(parentNode: any, nodeName: string, className: string): any {
-		return parentNode.childNodes.find((node: any) =>
-			node.nodeName === nodeName &&
-			node.attrs && node.attrs.some((attr: any) => attr.name === "class" && attr.value.includes(className))
+		return parentNode.childNodes.find(
+			(node: any) =>
+				node.nodeName === nodeName &&
+				node.attrs &&
+				node.attrs.some((attr: any) => attr.name === "class" && attr.value.includes(className))
 		);
 	}
 
@@ -102,14 +106,18 @@ export class RoomProcessing {
 		return null;
 	}
 
-
 	public static findTableByClass(node: any, className: string): any {
 		if (!node || !node.childNodes) {
 			return null;
 		}
 		for (const child of node.childNodes) {
-			if (child.nodeName === "td" && child.attrs.some((attr: {name: string; value: string | string[];}) =>
-				attr.name === "class" && attr.value.includes(className))) {
+			if (
+				child.nodeName === "td" &&
+				child.attrs.some(
+					(attr: {name: string; value: string | string[]}) =>
+						attr.name === "class" && attr.value.includes(className)
+				)
+			) {
 				return child.parentNode.parentNode;
 			}
 			const nestedResult = RoomProcessing.findTableByClass(child, className);

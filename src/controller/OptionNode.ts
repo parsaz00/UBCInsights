@@ -2,7 +2,7 @@ import {InsightError} from "./IInsightFacade";
 
 export class OptionNode {
 	private columns: string[];
-	private order: string |  {dir: string, keys: string[]} | null;
+	private order: string | {dir: string; keys: string[]} | null;
 	private dataSetID: string;
 	private orderProvided: boolean;
 	public group: string[] | null;
@@ -24,16 +24,16 @@ export class OptionNode {
 		this.columns = optionClause.COLUMNS;
 		this.order = optionClause.ORDER || null;
 
-		if(optionClause.ORDER) {
+		if (optionClause.ORDER) {
 			if (typeof optionClause.ORDER === "string") {
 				this.order = optionClause.ORDER;
 			} else if (typeof optionClause.ORDER === "object" && optionClause.ORDER.dir && optionClause.ORDER.keys) {
 				this.order = {
 					dir: optionClause.ORDER.dir,
-					keys: optionClause.ORDER.keys
+					keys: optionClause.ORDER.keys,
 				};
 			} else {
-				this.order = null;  // Set to null if ORDER is neither a string nor a valid object
+				this.order = null; // Set to null if ORDER is neither a string nor a valid object
 			}
 		} else {
 			this.order = null;
@@ -51,10 +51,7 @@ export class OptionNode {
 	 * CITATION: used ChatGPT to help plan logic out for grouping and extracting the TRANSFORMATION keys
 	 */
 	public validate(): boolean {
-		return this.validateColumns() &&
-			this.validateOrder() &&
-			this.validateGroup() &&
-			this.validateApply();
+		return this.validateColumns() && this.validateOrder() && this.validateGroup() && this.validateApply();
 	}
 
 	private validateColumns(): boolean {
@@ -85,7 +82,7 @@ export class OptionNode {
 					}
 				}
 			} else {
-				return false;  // Return false if ORDER is neither null, a string, nor a valid object
+				return false; // Return false if ORDER is neither null, a string, nor a valid object
 			}
 		}
 		return true;
@@ -138,7 +135,6 @@ export class OptionNode {
 		}
 		return true;
 	}
-
 
 	/**
 	 * Method that will process the dataset based on the OPTIONS clause
@@ -200,14 +196,33 @@ export class OptionNode {
 	private isValidField(field: string): boolean {
 		// console.log("Checking field:", field);
 
-		const validSuffixesCourses = ["uuid", "id", "title", "instructor"
-			, "dept", "year", "avg", "pass", "fail", "audit"];
-		const validSuffixesRooms = ["fullname", "shortname", "number"
-			, "name", "address", "type", "furniture", "href", "lat", "lon", "seats"];
-		const validFieldsCourses = validSuffixesCourses.map((suffix) =>
-			`${this.dataSetID}_${suffix}`);
-		const validFieldsRooms = validSuffixesRooms.map((suffix) =>
-			`${this.dataSetID}_${suffix}`);
+		const validSuffixesCourses = [
+			"uuid",
+			"id",
+			"title",
+			"instructor",
+			"dept",
+			"year",
+			"avg",
+			"pass",
+			"fail",
+			"audit",
+		];
+		const validSuffixesRooms = [
+			"fullname",
+			"shortname",
+			"number",
+			"name",
+			"address",
+			"type",
+			"furniture",
+			"href",
+			"lat",
+			"lon",
+			"seats",
+		];
+		const validFieldsCourses = validSuffixesCourses.map((suffix) => `${this.dataSetID}_${suffix}`);
+		const validFieldsRooms = validSuffixesRooms.map((suffix) => `${this.dataSetID}_${suffix}`);
 
 		// Check if the field is a predefined valid field for courses or rooms
 		if (validFieldsCourses.includes(field) || validFieldsRooms.includes(field)) {
@@ -231,8 +246,9 @@ export class OptionNode {
 		return field.split("_")[1];
 	}
 
-	private isOrderObject(order: string | {dir: string; keys: string[];} | null):
-		order is {dir: string; keys: string[];} {
+	private isOrderObject(
+		order: string | {dir: string; keys: string[]} | null
+	): order is {dir: string; keys: string[]} {
 		return order !== null && typeof order === "object" && "dir" in order && "keys" in order;
 	}
 
@@ -245,4 +261,3 @@ export class OptionNode {
 		return numericKeys.includes(this.removeDatasetIDPrefix(key));
 	}
 }
-

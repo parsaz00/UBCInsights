@@ -1,6 +1,11 @@
 // Citation: Used ChatGPT for suggestions
 import {
-	IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, InsightResult, NotFoundError,
+	IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError,
+	InsightResult,
+	NotFoundError,
 	ResultTooLargeError,
 } from "./IInsightFacade";
 import {unzipZipFileFromString, processFiles, writeToJsonFile, deleteFile} from "./UtilFunctions";
@@ -10,14 +15,22 @@ import JSZip from "jszip";
 import * as Parse5 from "parse5";
 import {QueryNode} from "./QueryNode";
 import {RoomProcessing} from "./RoomProcessing";
+import http from "http";
 
 const dataSetFolder = "./data";
 const Schema = {
 	type: "object",
 	properties: {
-		id: {type: "number"}, Course: {type: "string"}, Title: {type: "string"}, Professor: {type: "string"},
-		Subject: {type: "string"}, Year: {type: "string"}, Avg: {type: "number"}, Pass: {type: "number"},
-		Fail: {type: "number"}, Audit: {type: "number"},
+		id: {type: "number"},
+		Course: {type: "string"},
+		Title: {type: "string"},
+		Professor: {type: "string"},
+		Subject: {type: "string"},
+		Year: {type: "string"},
+		Avg: {type: "number"},
+		Pass: {type: "number"},
+		Fail: {type: "number"},
+		Audit: {type: "number"},
 	},
 	required: ["id", "Course", "Title", "Professor", "Subject", "Year", "Avg", "Pass", "Fail", "Audit"],
 };
@@ -95,8 +108,9 @@ export default class InsightFacade implements IInsightFacade {
 
 	// Citation: Refactoring done with the help of Chat GPT
 	private async processRooms(zip: JSZip, indexDocument: any, dataset: DataSet) {
-		const buildingTable = RoomProcessing.findBuildingTable(indexDocument) ||
-			await Promise.reject(new InsightError("Building table not found"));
+		const buildingTable =
+			RoomProcessing.findBuildingTable(indexDocument) ||
+			(await Promise.reject(new InsightError("Building table not found")));
 		const buildingLinks = RoomProcessing.getBuildingLinks(buildingTable);
 		await this.getGeolocations(buildingLinks);
 		await Promise.all(buildingLinks.map(this.processBuildingLink.bind(this, zip, dataset)));
@@ -122,9 +136,21 @@ export default class InsightFacade implements IInsightFacade {
 		if (!geoResponse || geoResponse.error) {
 			return;
 		}
-		dataset.section.push(new DatasetRoom(link.fullname, link.shortname, row.number,
-			`${link.shortname}_${row.number}`, link.address, geoResponse.lat, geoResponse.lon,
-			row.seats, row.type, row.furniture, row.href));
+		dataset.section.push(
+			new DatasetRoom(
+				link.fullname,
+				link.shortname,
+				row.number,
+				`${link.shortname}_${row.number}`,
+				link.address,
+				geoResponse.lat,
+				geoResponse.lon,
+				row.seats,
+				row.type,
+				row.furniture,
+				row.href
+			)
+		);
 	}
 
 	private async extracted(content: string) {
@@ -200,20 +226,41 @@ export default class InsightFacade implements IInsightFacade {
 		}
 	}
 
+	// CIATION: had to change to use get instead of fetch: used chatGPT and piazza for help
 	private async getGeolocations(buildingLinks: any[]): Promise<void> {
-		const requests = buildingLinks.map(async (link) => {
+		const requests = buildingLinks.map((link) => this.handleGeolocationRequest(link));
+		await Promise.all(requests);
+	}
+
+	private handleGeolocationRequest(link: any): Promise<void> {
+		return new Promise<void>((resolve) => {
 			if (!this.geoCache[link.address]) {
 				const encodedAddress = encodeURIComponent(link.address);
 				const url = `http://cs310.students.cs.ubc.ca:11316/api/v1/project_team127/${encodedAddress}`;
-				try {
-					const response = await fetch(url); // adding timeout
-					this.geoCache[link.address] = await response.json();
-				} catch (error) {
-					console.error(`Failed to get geolocation for address: ${link.address}`, error);
-					this.geoCache[link.address] = null; // cache the failure, so we don’t retry
-				}
+
+				http.get(url, (res) => {
+					let data = "";
+
+					res.on("data", (chunk) => {
+						data += chunk;
+					});
+
+					res.on("end", () => {
+						try {
+							this.geoCache[link.address] = JSON.parse(data);
+						} catch (error) {
+							console.error(`Failed to get geolocation for address: ${link.address}`, error);
+							this.geoCache[link.address] = null; // cache the failure, so we don’t retry
+						}
+						resolve();
+					});
+				}).on("error", (err) => {
+					console.error(`Error with the request: ${err.message}`);
+					resolve();
+				});
+			} else {
+				resolve();
 			}
 		});
-		await Promise.all(requests);
 	}
 }

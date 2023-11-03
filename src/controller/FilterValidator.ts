@@ -111,10 +111,31 @@ export class FilterValidator {
 	// FIRST PART BEFORE underscore is dynamic
 	// Citation: Used ChatGPT to figure out how to write the syntax for map (`${this.dataSetID}_${suffix}`)
 	private isValidField(field: string): boolean {
-		const validSuffixesCourses = ["uuid", "id", "title", "instructor", "dept", "year"
-			, "avg", "pass", "fail", "audit"];
-		const validSuffixesRooms = ["fullname", "shortname", "number", "name", "address", "type"
-			, "furniture", "href", "lat", "lon", "seats"];
+		const validSuffixesCourses = [
+			"uuid",
+			"id",
+			"title",
+			"instructor",
+			"dept",
+			"year",
+			"avg",
+			"pass",
+			"fail",
+			"audit",
+		];
+		const validSuffixesRooms = [
+			"fullname",
+			"shortname",
+			"number",
+			"name",
+			"address",
+			"type",
+			"furniture",
+			"href",
+			"lat",
+			"lon",
+			"seats",
+		];
 		const validFieldsCourses = validSuffixesCourses.map((suffix) => `${this.dataSetID}_${suffix}`);
 		const validFieldsRooms = validSuffixesRooms.map((suffix) => `${this.dataSetID}_${suffix}`);
 		return validFieldsCourses.includes(field) || validFieldsRooms.includes(field);
@@ -218,7 +239,7 @@ export class FilterValidator {
 		let applyKeys: string[] = [];
 		for (const rule of apply) {
 			const applyKey = Object.keys(rule)[0];
-			if(applyKeys.includes(applyKey)) {
+			if (applyKeys.includes(applyKey)) {
 				return false; // duplicate key found
 			}
 			applyKeys.push(applyKey);
