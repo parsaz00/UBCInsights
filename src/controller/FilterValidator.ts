@@ -18,13 +18,11 @@ export class FilterValidator {
 	 */
 	public validateFilter(filter: any): boolean {
 		if (typeof filter !== "object" || filter == null) {
-			console.log("first if of ValidateFilter");
 			return false;
 		}
 		const keys = Object.keys(filter);
 
 		if (keys.length !== 1) {
-			console.log("2nd if of ValidateFilter");
 			return false;
 		}
 		const key = keys[0];

@@ -56,7 +56,6 @@ export class QueryNode {
 
 	public evaluate(dataset: DataSet): InsightResult[] {
 		const filteredResults = this.whereNode.evaluate(dataset.section);
-		console.log("filtered result is", filteredResults);
 		// If GROUP and APPLY clauses are provided, we will process them
 		if (this.optionNode.group && this.optionNode.apply) {
 			const groupingProcessor = new GroupingProcessor(filteredResults, this.optionNode.group);

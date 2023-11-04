@@ -41,7 +41,6 @@ export class OptionNode {
 		this.orderProvided = "ORDER" in optionClause;
 		this.group = groupClause || null;
 		this.apply = applyClause || null;
-		// console.log("Apply clause:", applyClause);
 	}
 
 	/**
@@ -113,14 +112,12 @@ export class OptionNode {
 			for (let rule of this.apply) {
 				const applyKey = Object.keys(rule)[0];
 				if (!this.columns.includes(applyKey)) {
-					// console.log("APPLY field not present in COLUMNS: returning false");
 					return false;
 				}
 			}
 			const applyKeys = this.apply.map((rule) => Object.keys(rule)[0]);
 			const uniqueApplyKeys = [...new Set(applyKeys)];
 			if (applyKeys.length !== uniqueApplyKeys.length) {
-				// console.log("Duplicate apply keys detected: returning false");
 				return false;
 			}
 			for (let rule of this.apply) {
@@ -128,7 +125,6 @@ export class OptionNode {
 				const operation = Object.keys(applyRule)[0];
 				const key = applyRule[operation];
 				if (["MAX", "MIN", "AVG", "SUM"].includes(operation) && !this.isNumericKey(key)) {
-					// console.log("Non-numeric key used with a numeric operation: returning false");
 					return false;
 				}
 			}
@@ -194,8 +190,6 @@ export class OptionNode {
 
 	// Ciation: Used GPT to help debug this function because it was returning false when Queries had TRANSFORMATION
 	private isValidField(field: string): boolean {
-		// console.log("Checking field:", field);
-
 		const validSuffixesCourses = [
 			"uuid",
 			"id",
@@ -232,13 +226,10 @@ export class OptionNode {
 		// Check if the field is present in the apply array (if it exists)
 		if (this.apply) {
 			const applyKeys = this.apply.map((rule) => Object.keys(rule)[0]);
-			// console.log("Apply keys:", applyKeys);  // Debugging statement
 			if (applyKeys.includes(field)) {
-				// console.log("Field is a valid apply field:", field);
 				return true;
 			}
 		}
-		// console.log("Field is not valid:", field);
 		return false;
 	}
 
