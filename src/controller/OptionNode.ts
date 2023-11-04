@@ -89,16 +89,17 @@ export class OptionNode {
 
 	private validateGroup(): boolean {
 		if (this.group) {
+			if (this.group.length === 0) {
+				return false; // Group must not be empty
+			}
+			// Every group key must be present in the columns
 			for (let field of this.group) {
 				if (!this.columns.includes(field)) {
 					return false;
 				}
 			}
-			if (this.group.length === 0) {
-				return false;
-			}
 		}
-		return true;
+		return true; // Passes validation
 	}
 
 	private validateApply(): boolean {
