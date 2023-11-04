@@ -58,7 +58,7 @@ export default class InsightFacade implements IInsightFacade {
 				}
 				this.datasetsLoaded = true;
 			} catch (error) {
-				console.error("Error loading datasets from disk:", error);
+				console.log("didn't work rip bro");
 			}
 		}
 	}
@@ -249,13 +249,11 @@ export default class InsightFacade implements IInsightFacade {
 						try {
 							this.geoCache[link.address] = JSON.parse(data);
 						} catch (error) {
-							console.error(`Failed to get geolocation for address: ${link.address}`, error);
 							this.geoCache[link.address] = null; // cache the failure, so we don’t retry
 						}
 						resolve();
 					});
 				}).on("error", (err) => {
-					console.error(`Error with the request: ${err.message}`);
 					resolve();
 				});
 			} else {
