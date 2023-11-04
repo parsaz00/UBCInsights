@@ -1,0 +1,41 @@
+{
+	"title": "c2EdgeTest3",
+	"input": {
+		"WHERE": {
+			"IS": {
+				"rooms_type": "*Small Group*"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_type",
+				"minSeats"
+			],
+			"ORDER": {
+				"dir": "UP",
+				"keys": [
+					"minSeats"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_type"
+			],
+			"APPLY": [
+				{
+					"minSeats": {
+						"MIN": "rooms_seats"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"expected": [
+		{
+			"rooms_type": "Small Group",
+			"minSeats": 6
+		}
+	]
+}

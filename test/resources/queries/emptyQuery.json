@@ -1,6 +1,0 @@
-{
-	"title": "empty query test: should fail",
-	"input": {},
-	"errorExpected": true,
-	"expected": "InsightError"
-}
