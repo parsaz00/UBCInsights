@@ -9,7 +9,9 @@ import {
 	ResultTooLargeError,
 } from "./IInsightFacade";
 import {unzipZipFileFromString, processFiles, writeToJsonFile, deleteFile} from "./UtilFunctions";
-import {DataSet, DataSetManager, DatasetRoom, TempSection} from "./DataSet";
+
+import {DataSet, DataSetManager, DatasetRoom} from "./DataSet";
+
 import * as fs from "fs-extra";
 import JSZip from "jszip";
 import * as Parse5 from "parse5";
@@ -92,9 +94,6 @@ export default class InsightFacade implements IInsightFacade {
 			if (!indexContent) {
 				return Promise.reject(new InsightError("htm file content is empty or unreadable"));
 			}
-			if (!indexContent) {
-				return Promise.reject(new InsightError("htm file not found"));
-			}
 			const indexDocument = Parse5.parse(indexContent);
 			await this.processRooms(zip, indexDocument, tempDataSet);
 		} else {
@@ -106,7 +105,7 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.resolve(Array.from(this.datasetmap.map.keys()));
 	}
 
-	// Citation: Refactoring done with the help of Chat GPT
+	// Citation: Refactoring done with the help of ChatGPT
 	private async processRooms(zip: JSZip, indexDocument: any, dataset: DataSet) {
 		const buildingTable =
 			RoomProcessing.findBuildingTable(indexDocument) ||
@@ -116,7 +115,9 @@ export default class InsightFacade implements IInsightFacade {
 		await Promise.all(buildingLinks.map(this.processBuildingLink.bind(this, zip, dataset)));
 	}
 
-	// Citation: Refactoring done with the help of Chat GPT
+
+	// Citation: Refactoring done with the help of ChatGPT
+
 	private async processBuildingLink(zip: JSZip, dataset: DataSet, link: any) {
 		const buildingFile = zip.file(link.href.substring(2));
 		if (!buildingFile) {
@@ -260,5 +261,23 @@ export default class InsightFacade implements IInsightFacade {
 				resolve();
 			}
 		});
+
+	}
+
+	public static async addDataset(id: string, data: any, kd: any) {
+		this.addDataset(id, data, kd);
+	}
+
+	public static async removeDataset(id: string) {
+		this.removeDataset(id);
+	}
+
+	public static async performQuery(query: any) {
+		this.performQuery(query);
+	}
+
+	public static async listDatasets() {
+		this.listDatasets();
+
 	}
 }

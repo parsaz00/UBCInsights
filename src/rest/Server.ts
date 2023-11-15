@@ -1,6 +1,9 @@
 import express, {Application, Request, Response} from "express";
 import * as http from "http";
 import cors from "cors";
+import InsightFacade from "../controller/InsightFacade";
+import {InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
+
 
 export default class Server {
 	private readonly port: number;
@@ -11,6 +14,7 @@ export default class Server {
 		console.info(`Server::<init>( ${port} )`);
 		this.port = port;
 		this.express = express();
+
 
 		this.registerMiddleware();
 		this.registerRoutes();
@@ -35,6 +39,7 @@ export default class Server {
 				console.error("Server::start() - server already listening");
 				reject();
 			} else {
+
 				this.server = this.express.listen(this.port, () => {
 					console.info(`Server::start() - server listening on port: ${this.port}`);
 					resolve();
@@ -84,6 +89,10 @@ export default class Server {
 		// http://localhost:4321/echo/hello
 		this.express.get("/echo/:msg", Server.echo);
 
+		this.express.put("/dataset/:id/:kind", Server.put);
+		this.express.delete("/dataset/:id", Server.delete);
+		this.express.post("/query", Server.performQuery);
+		this.express.get("/datasets", Server.listDatasets);
 		// TODO: your other endpoints should go here
 
 	}
@@ -108,4 +117,70 @@ export default class Server {
 			return "Message not provided";
 		}
 	}
+
+
+	private static async put(req: Request, res: Response) {
+		try {
+			// Extract parameters from the URL
+			const {id, kind} = req.params;
+			let kd = null;
+			if (kind === "sections") {
+				kd = InsightDatasetKind.Sections;
+			}
+			if (kind === "rooms") {
+				kd = InsightDatasetKind.Rooms;
+			}
+			// Call InsightFacade.addDataset with the parsed data
+			const result = await InsightFacade.addDataset(id, req.body.toString("base64"), kd);
+			// Respond with success
+			res.status(200).json({result});
+		} catch (err) {
+			// Respond with error
+			res.status(400).json({error: "Error processing request"});
+		}
+	}
+
+	private static async delete(req: Request, res: Response) {
+		try {
+			// Extract parameter from the URL
+			const id = req.params.id;
+
+			// Call InsightFacade.removeDataset with the provided id
+			const result = await InsightFacade.removeDataset(id);
+
+			// Respond with success
+			res.status(200).json({result});
+		} catch (err) {
+			// Respond with error
+			if (err instanceof InsightError) {
+				res.status(400).json({error: "Error Processing Request"});
+			} else if (err instanceof NotFoundError) {
+				res.status(404).json({error: "Dataset Not Found"});
+			} else {
+				res.status(400).json({error: "Error Processing Request"});
+			}
+		}
+	}
+
+	private static async performQuery(req: Request, res: Response) {
+		try {
+			// Extract query from the request body
+			const query = req.body;
+			// Call InsightFacade.performQuery with the provided query
+			const result = await InsightFacade.performQuery(query);
+			// Respond with success
+			res.status(200).json({result});
+		} catch (err) {
+			// Respond with error
+			res.status(400).json({error: "Error Processing Request"});
+		}
+	}
+
+	private static async listDatasets(req: Request, res: Response) {
+		// Call InsightFacade.listDatasets
+		const result = await InsightFacade.listDatasets();
+		// Respond with success
+		res.status(200).json({result});
+	}
+
 }
