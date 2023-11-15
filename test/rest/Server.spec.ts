@@ -5,6 +5,7 @@ import {expect} from "chai";
 import request, {Response} from "supertest";
 
 describe("Facade D3", function () {
+
 	let facade: InsightFacade;
 	let server: Server;
 
