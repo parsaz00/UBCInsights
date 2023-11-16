@@ -15,6 +15,7 @@ export default class Server {
 		this.port = port;
 		this.express = express();
 
+
 		this.registerMiddleware();
 		this.registerRoutes();
 		this.facade = new InsightFacade();
@@ -39,6 +40,7 @@ export default class Server {
 				console.error("Server::start() - server already listening");
 				reject();
 			} else {
+
 				this.server = this.express.listen(this.port, () => {
 					console.info(`Server::start() - server listening on port: ${this.port}`);
 					resolve();
@@ -126,6 +128,7 @@ export default class Server {
 	}
 
 	private async putDataset(req: Request, res: Response) {
+
 		try {
 			// Extract dataset ID from URL parameter
 			const id: string = req.params.id;
@@ -171,7 +174,6 @@ export default class Server {
 		}
 	}
 
-
 	// TODO: maybe we should add security checks so we don't get hit with a stack attack using a query
 	private async postQuery(req: Request, res: Response) {
 		try {
@@ -196,7 +198,6 @@ export default class Server {
 			}
 		}
 	}
-
 	private async getDatasets(req: Request, res: Response) {
 		try {
 			// Retrieve the datasets in list form

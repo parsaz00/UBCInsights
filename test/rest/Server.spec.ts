@@ -597,6 +597,7 @@ describe("Facade D3", function () {
 			const result = await request(SERVER_URL).post("/query");
 			expect(result.status).to.be.equal(400);
 		});
+
 	});
 
 	// The other endpoints work similarly. You should be able to find all instructions at the supertest documentation
