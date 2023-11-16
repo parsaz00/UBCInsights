@@ -263,21 +263,4 @@ export default class InsightFacade implements IInsightFacade {
 		});
 
 	}
-
-	public static async addDataset(id: string, data: any, kd: any) {
-		this.addDataset(id, data, kd);
-	}
-
-	public static async removeDataset(id: string) {
-		this.removeDataset(id);
-	}
-
-	public static async performQuery(query: any) {
-		this.performQuery(query);
-	}
-
-	public static async listDatasets() {
-		this.listDatasets();
-
-	}
 }

@@ -9,6 +9,7 @@ export default class Server {
 	private readonly port: number;
 	private express: Application;
 	private server: http.Server | undefined;
+	private facade: InsightFacade;
 
 	constructor(port: number) {
 		console.info(`Server::<init>( ${port} )`);
@@ -18,6 +19,7 @@ export default class Server {
 
 		this.registerMiddleware();
 		this.registerRoutes();
+		this.facade = new InsightFacade();
 
 		// NOTE: you can serve static frontend files in from your express server
 		// by uncommenting the line below. This makes files in ./frontend/public
@@ -89,11 +91,20 @@ export default class Server {
 		// http://localhost:4321/echo/hello
 		this.express.get("/echo/:msg", Server.echo);
 
-		this.express.put("/dataset/:id/:kind", Server.put);
-		this.express.delete("/dataset/:id", Server.delete);
-		this.express.post("/query", Server.performQuery);
-		this.express.get("/datasets", Server.listDatasets);
 		// TODO: your other endpoints should go here
+
+		// PUT Request
+		this.express.put("/dataset/:id/:kind", this.putDataset.bind(this));
+
+		// DELETE Request
+		this.express.delete("/dataset/:id", this.deleteDataset.bind(this));
+
+		// POST Request
+		this.express.post("/query", this.postQuery.bind(this));
+
+		// GET Request
+		this.express.post("/datasets", this.getDatasets.bind(this));
+
 
 	}
 
@@ -118,69 +129,87 @@ export default class Server {
 		}
 	}
 
+	private async putDataset(req: Request, res: Response) {
 
-	private static async put(req: Request, res: Response) {
 		try {
-			// Extract parameters from the URL
-			const {id, kind} = req.params;
-			let kd = null;
-			if (kind === "sections") {
-				kd = InsightDatasetKind.Sections;
-			}
-			if (kind === "rooms") {
-				kd = InsightDatasetKind.Rooms;
-			}
-			// Call InsightFacade.addDataset with the parsed data
-			const result = await InsightFacade.addDataset(id, req.body.toString("base64"), kd);
-			// Respond with success
-			res.status(200).json({result});
+			// Extract dataset ID from URL parameter
+			const id: string = req.params.id;
+			// Extract dataset kind from the URL and cast to InsightDatasetKind
+			const kind: InsightDatasetKind = req.params.kind as InsightDatasetKind;
+			// Convert the raw zip file bugger from the request body to a base64 string
+			const content: string = req.body.toString("base64");
+			// console.log("id is:", id);
+			// console.log("kind is", kind);
+			// console.log("content is", content);
+
+			const result = await this.facade.addDataset(id, content, kind);
+			res.status(200).json({result: result});
 		} catch (err) {
-			// Respond with error
-			res.status(400).json({error: "Error processing request"});
-		}
-	}
-
-	private static async delete(req: Request, res: Response) {
-		try {
-			// Extract parameter from the URL
-			const id = req.params.id;
-
-			// Call InsightFacade.removeDataset with the provided id
-			const result = await InsightFacade.removeDataset(id);
-
-			// Respond with success
-			res.status(200).json({result});
-		} catch (err) {
-			// Respond with error
-			if (err instanceof InsightError) {
-				res.status(400).json({error: "Error Processing Request"});
-			} else if (err instanceof NotFoundError) {
-				res.status(404).json({error: "Dataset Not Found"});
+			if (err instanceof Error) {
+				console.log(err.message);
+				res.status(400).json({error: err.message});
 			} else {
-				res.status(400).json({error: "Error Processing Request"});
+				res.status(500).json({error: "Internal Server error"});
 			}
 		}
 	}
 
-	private static async performQuery(req: Request, res: Response) {
+	private async deleteDataset(req: Request, res: Response) {
 		try {
-			// Extract query from the request body
-			const query = req.body;
-			// Call InsightFacade.performQuery with the provided query
-			const result = await InsightFacade.performQuery(query);
-			// Respond with success
-			res.status(200).json({result});
+			// Extract dataset ID from URL
+			const id: string = req.params.id;
+
+			// call removeDataset
+			const result = await this.facade.removeDataset(id);
+			res.status(200).json({result: result});
 		} catch (err) {
-			// Respond with error
-			res.status(400).json({error: "Error Processing Request"});
+			if (err instanceof NotFoundError) {
+				// If the dataset is not found, respond with HTTP 404
+				res.status(404).json({error: err.message});
+			} else if (err instanceof InsightError) {
+				// For other errors (e.g., invalid ID), respond with HTTP 400
+				res.status(400).json({error: err.message});
+			} else {
+				// For unhandled errors, respond with HTTP 500 (Internal Server Error)
+				res.status(500).json({error: "Internal Server Error"});
+			}
 		}
 	}
 
-	private static async listDatasets(req: Request, res: Response) {
-		// Call InsightFacade.listDatasets
-		const result = await InsightFacade.listDatasets();
-		// Respond with success
-		res.status(200).json({result});
+	// TODO: maybe we should add security checks so we don't get hit with a stack attack using a query
+	private async postQuery(req: Request, res: Response) {
+		try {
+			// Extract the query from the request body
+			const query = req.body;
+
+			// Check the query is present and not null
+			if (!query) {
+				throw new InsightError("Query is missing or malformed");
+			}
+
+			// Perform query
+			const result = await this.facade.performQuery(query);
+			res.status(200).json({result: result});
+		} catch (err) {
+			if (err instanceof InsightError) {
+				console.log(err.message);
+				res.status(400).json({error: err.message});
+			} else {
+				// Handle uncaught exception with HTTP 500
+				res.status(500).json({error: "Internal Server Error"});
+			}
+		}
+	}
+	private async getDatasets(req: Request, res: Response) {
+		try {
+			// Retrieve the datasets in list form
+			const datasets = await this.facade.listDatasets();
+			res.status(200).json({result: datasets});
+		} catch (err) {
+			// Handle any unexpected errors
+			console.error("Error in getDatasets: ", err);
+			res.status(500).json({error: "Internal Server Error"});
+		}
 	}
 
 }
