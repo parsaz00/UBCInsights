@@ -281,8 +281,8 @@ describe("Facade D3", function () {
 			const query = {
 				WHERE: {
 					IS: {
-						sections_dept: 97
-					}
+						sections_dept: 97,
+					},
 				},
 				OPTIONS: {
 					COLUMNS: [
@@ -470,10 +470,10 @@ describe("Facade D3", function () {
 						},
 						{
 							GT: {
-								rooms_seats: 1000000000000000000
-							}
-						}
-					]
+								rooms_seats: 1000000000000000000,
+							},
+						},
+					],
 				},
 				OPTIONS: {
 					COLUMNS: [
@@ -554,8 +554,8 @@ describe("Facade D3", function () {
 					AND: [
 						{
 							IS: {
-								rooms_furniture: 2123
-							}
+								rooms_furniture: 2123,
+							},
 						},
 						{
 							GT: {
@@ -583,11 +583,11 @@ describe("Facade D3", function () {
 					APPLY: [
 						{
 							maxSeats: {
-								MAX: "rooms_seats"
-							}
-						}
-					]
-				}
+								MAX: "rooms_seats",
+							},
+						},
+					],
+				},
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(400);
