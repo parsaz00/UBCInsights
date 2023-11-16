@@ -198,6 +198,7 @@ export default class Server {
 			}
 		}
 	}
+	
 	private async getDatasets(req: Request, res: Response) {
 		try {
 			// Retrieve the datasets in list form
