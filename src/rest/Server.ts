@@ -203,7 +203,7 @@ export default class Server {
 			const datasets = await this.facade.listDatasets();
 			res.status(200).json({result: datasets});
 		} catch (err) {
-			// Handle any unexpected errors
+			// Handle any unexpected errors with 500
 			console.error("Error in getDatasets: ", err);
 			res.status(500).json({error: "Internal Server Error"});
 		}
