@@ -8,6 +8,7 @@ import * as fs from "fs";
 import {clearDisk} from "../TestUtil";
 
 describe("Facade D3", function () {
+
 	let facade: InsightFacade;
 	let server: Server;
 
