@@ -8,14 +8,13 @@ export class App {
 		console.info(`App::initServer( ${port} ) - start`);
 
 		const server = new Server(port);
-		return server
-			.start()
-			.then(() => {
-				console.info("App::initServer() - started");
-			})
-			.catch((err: Error) => {
-				console.error(`App::initServer() - ERROR: ${err.message}`);
-			});
+
+		return server.start().then(() => {
+			console.info("App::initServer() - started");
+		}).catch((err: Error) => {
+			console.error(`App::initServer() - ERROR: ${err.message}`);
+		});
+
 	}
 }
 

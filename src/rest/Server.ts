@@ -4,6 +4,7 @@ import cors from "cors";
 import InsightFacade from "../controller/InsightFacade";
 import {InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
 
+
 export default class Server {
 	private readonly port: number;
 	private express: Application;
@@ -14,6 +15,8 @@ export default class Server {
 		console.info(`Server::<init>( ${port} )`);
 		this.port = port;
 		this.express = express();
+
+
 		this.registerMiddleware();
 		this.registerRoutes();
 		this.facade = new InsightFacade();
@@ -38,16 +41,15 @@ export default class Server {
 				console.error("Server::start() - server already listening");
 				reject();
 			} else {
-				this.server = this.express
-					.listen(this.port, () => {
-						console.info(`Server::start() - server listening on port: ${this.port}`);
-						resolve();
-					})
-					.on("error", (err: Error) => {
-						// catches errors in server start
-						console.error(`Server::start() - server ERROR: ${err.message}`);
-						reject(err);
-					});
+
+				this.server = this.express.listen(this.port, () => {
+					console.info(`Server::start() - server listening on port: ${this.port}`);
+					resolve();
+				}).on("error", (err: Error) => {
+					// catches errors in server start
+					console.error(`Server::start() - server ERROR: ${err.message}`);
+					reject(err);
+				});
 			}
 		});
 	}
@@ -102,6 +104,8 @@ export default class Server {
 
 		// GET Request
 		this.express.post("/datasets", this.getDatasets.bind(this));
+
+
 	}
 
 	// The next two methods handle the echo service.
@@ -126,6 +130,7 @@ export default class Server {
 	}
 
 	private async putDataset(req: Request, res: Response) {
+
 		try {
 			// Extract dataset ID from URL parameter
 			const id: string = req.params.id;
@@ -206,4 +211,5 @@ export default class Server {
 			res.status(500).json({error: "Internal Server Error"});
 		}
 	}
+
 }
