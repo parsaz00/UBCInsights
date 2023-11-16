@@ -57,26 +57,24 @@ describe("Facade D3", function () {
 	describe("Server PUT /dataset/:id/:kind", function () {
 		const SERVER_URL = "http://localhost:4321";
 
-		it("should add a sections dataset correctly and successfully", async function () {
+		it("should add a sections dataset correctly and successfully", async function() {
 			const datasetId = `id-${new Date().getTime()}`; // Temporary unique ID for each test
 			const datasetKind = InsightDatasetKind.Sections;
 			const datasetConent = fs.readFileSync("test/resources/archives/pair.zip");
 
-			const result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			const result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetConent)
 				.set("Content-Type", "application/x-zip-compressed");
 
 			expect(result.status).to.be.equal(200);
 			expect(result.body.result).to.include(datasetId);
 		});
-		it("should add a rooms dataset correctly and successfully", async function () {
+		it("should add a rooms dataset correctly and successfully", async function() {
 			const datasetId = `id-${new Date().getTime()}`; // Temporary unique ID for each test
 			const datasetKind = InsightDatasetKind.Rooms;
 			const datasetConent = fs.readFileSync("test/resources/archives/campus.zip");
 
-			const result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			const result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetConent)
 				.set("Content-Type", "application/x-zip-compressed");
 
@@ -88,68 +86,64 @@ describe("Facade D3", function () {
 			const datasetKind = InsightDatasetKind.Sections;
 			const datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 
-			const result = await request(SERVER_URL)
-				.put(`/dataset/${invalidId}/${datasetKind}`)
+			const result = await request(SERVER_URL).put(`/dataset/${invalidId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 			expect(result.status).to.be.equal(400);
 		});
-		it("should reject unsupported dataset kind", async function () {
+		it("should reject unsupported dataset kind", async function() {
 			const datasetId = "id5";
 			const unsupportedKind = "unsupported_kind";
 			const datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 
-			const result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${unsupportedKind}`)
+			const result = await request(SERVER_URL).put(`/dataset/${datasetId}/${unsupportedKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
 			expect(result.status).to.be.equal(400);
 		});
-		it("should reject duplicate dataset", async function () {
+		it("should reject duplicate dataset", async function() {
 			const datasetId = "id6";
 			const datasetKind = InsightDatasetKind.Sections;
 			const datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 
 			// First attempt (should succeed)
-			await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
 			// Second attempt (should fail)
-			const result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			const result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
 			expect(result.status).to.be.equal(400);
 		});
-		it("should reject invalid dataset file", async function () {
+		it("should reject invalid dataset file", async function() {
 			const datasetId = "id7";
 			const datasetKind = InsightDatasetKind.Sections;
 			const invalidDatasetContent = Buffer.from("This is not a valid zip file");
 
-			const result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			const result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(invalidDatasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
 			expect(result.status).to.be.equal(400);
 		});
+
+
 	});
 
 	describe("Server DELETE /dataset/:id ", function () {
 		const SERVER_URL = "http://localhost:4321";
 
-		it("should delete a dataset correctly and responsd with success", async function () {
+		it("should delete a dataset correctly and responsd with success", async function() {
 			// Add dataset
 			const datasetId = `id-${new Date().getTime()}`;
 			const datasetKind = InsightDatasetKind.Sections;
 			const datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 
-			let result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			let result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
@@ -160,14 +154,13 @@ describe("Facade D3", function () {
 			expect(result1.status).to.be.equal(200);
 			expect(result1.body.result).to.be.equal(datasetId);
 		});
-		it("should delete a ROOMS dataset correctly and responsd with success", async function () {
+		it("should delete a ROOMS dataset correctly and responsd with success", async function() {
 			// Add dataset
 			const datasetId = `id-${new Date().getTime()}`;
 			const datasetKind = InsightDatasetKind.Rooms;
 			const datasetContent = fs.readFileSync("test/resources/archives/campus.zip");
 
-			let result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			let result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
@@ -179,26 +172,25 @@ describe("Facade D3", function () {
 			expect(result1.body.result).to.be.equal(datasetId);
 		});
 
-		it("should return $)$ for deleting a dataset that does NOT exist", async function () {
+		it("should return $)$ for deleting a dataset that does NOT exist", async function() {
 			const invalidId = "nonExistentId";
 			const result = await request(SERVER_URL).delete(`/dataset/${invalidId}`);
 			expect(result.status).to.be.equal(404);
 		});
 
-		it("should return 400 for deleting a dataset with invalid ID", async function () {
+		it("should return 400 for deleting a dataset with invalid ID", async function() {
 			const invalidId = "invalid_id";
 			const result = await request(SERVER_URL).delete(`/dataset/${invalidId}`);
 			expect(result.status).to.be.equal(400);
 		});
 
-		it("should return 404 when trying to delete the same dataset twice", async function () {
+		it("should return 404 when trying to delete the same dataset twice", async function() {
 			const datasetId = `id-${new Date().getTime()}`;
 			const datasetKind = InsightDatasetKind.Sections;
 			const datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 
 			// Add dataset
-			await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
@@ -218,7 +210,7 @@ describe("Facade D3", function () {
 		const datasetKind = InsightDatasetKind.Sections;
 		let datasetContent = null; // To be loaded before tests
 
-		before(async function () {
+		before(async function() {
 			// Load dataset content
 			datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 			// Add the dataset
@@ -232,13 +224,16 @@ describe("Facade D3", function () {
 			const query = {
 				WHERE: {
 					GT: {
-						sections_avg: 97,
-					},
+						sections_avg: 97
+					}
 				},
 				OPTIONS: {
-					COLUMNS: ["sections_dept", "sections_avg"],
-					ORDER: "sections_avg",
-				},
+					COLUMNS: [
+						"sections_dept",
+						"sections_avg"
+					],
+					ORDER: "sections_avg"
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			console.log(result);
@@ -249,13 +244,16 @@ describe("Facade D3", function () {
 			const query = {
 				WHERE: {
 					GT: {
-						sections_avg: 101,
-					},
+						sections_avg: 101
+					}
 				},
 				OPTIONS: {
-					COLUMNS: ["sections_dept", "sections_avg"],
-					ORDER: "sections_avg",
-				},
+					COLUMNS: [
+						"sections_dept",
+						"sections_avg"
+					],
+					ORDER: "sections_avg"
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(200);
@@ -265,13 +263,16 @@ describe("Facade D3", function () {
 			const query = {
 				WHERE: {
 					GT: {
-						sections_avg: "hello",
-					},
+						sections_avg: "hello"
+					}
 				},
 				OPTIONS: {
-					COLUMNS: ["sections_dept", "sections_avg"],
-					ORDER: "sections_avg",
-				},
+					COLUMNS: [
+						"sections_dept",
+						"sections_avg"
+					],
+					ORDER: "sections_avg"
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(400);
@@ -284,9 +285,12 @@ describe("Facade D3", function () {
 					},
 				},
 				OPTIONS: {
-					COLUMNS: ["sections_dept", "sections_avg"],
-					ORDER: "sections_avg",
-				},
+					COLUMNS: [
+						"sections_dept",
+						"sections_avg"
+					],
+					ORDER: "sections_avg"
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(400);
@@ -295,13 +299,16 @@ describe("Facade D3", function () {
 			const query = {
 				WHERE: {
 					IS: {
-						adsfasd_dept: 101,
-					},
+						adsfasd_dept: 101
+					}
 				},
 				OPTIONS: {
-					COLUMNS: ["adsfasd_dept", "adsfasd_avg"],
-					ORDER: "adsfasd_avg",
-				},
+					COLUMNS: [
+						"adsfasd_dept",
+						"adsfasd_avg"
+					],
+					ORDER: "adsfasd_avg"
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(400);
@@ -318,17 +325,17 @@ describe("Facade D3", function () {
 		});
 	});
 
+
 	describe("Server DELETE /dataset/:id ", function () {
 		const SERVER_URL = "http://localhost:4321";
 
-		it("should delete a dataset correctly and responsd with success", async function () {
+		it("should delete a dataset correctly and responsd with success", async function() {
 			// Add dataset
 			const datasetId = `id-${new Date().getTime()}`;
 			const datasetKind = InsightDatasetKind.Sections;
 			const datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 
-			let result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			let result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
@@ -339,14 +346,13 @@ describe("Facade D3", function () {
 			expect(result1.status).to.be.equal(200);
 			expect(result1.body.result).to.be.equal(datasetId);
 		});
-		it("should delete a ROOMS dataset correctly and responsd with success", async function () {
+		it("should delete a ROOMS dataset correctly and responsd with success", async function() {
 			// Add dataset
 			const datasetId = `id-${new Date().getTime()}`;
 			const datasetKind = InsightDatasetKind.Rooms;
 			const datasetContent = fs.readFileSync("test/resources/archives/campus.zip");
 
-			let result = await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			let result = await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
@@ -358,26 +364,25 @@ describe("Facade D3", function () {
 			expect(result1.body.result).to.be.equal(datasetId);
 		});
 
-		it("should return $)$ for deleting a dataset that does NOT exist", async function () {
+		it("should return $)$ for deleting a dataset that does NOT exist", async function() {
 			const invalidId = "nonExistentId";
 			const result = await request(SERVER_URL).delete(`/dataset/${invalidId}`);
 			expect(result.status).to.be.equal(404);
 		});
 
-		it("should return 400 for deleting a dataset with invalid ID", async function () {
+		it("should return 400 for deleting a dataset with invalid ID", async function() {
 			const invalidId = "invalid_id";
 			const result = await request(SERVER_URL).delete(`/dataset/${invalidId}`);
 			expect(result.status).to.be.equal(400);
 		});
 
-		it("should return 404 when trying to delete the same dataset twice", async function () {
+		it("should return 404 when trying to delete the same dataset twice", async function() {
 			const datasetId = `id-${new Date().getTime()}`;
 			const datasetKind = InsightDatasetKind.Sections;
 			const datasetContent = fs.readFileSync("test/resources/archives/pair.zip");
 
 			// Add dataset
-			await request(SERVER_URL)
-				.put(`/dataset/${datasetId}/${datasetKind}`)
+			await request(SERVER_URL).put(`/dataset/${datasetId}/${datasetKind}`)
 				.send(datasetContent)
 				.set("Content-Type", "application/x-zip-compressed");
 
@@ -391,13 +396,14 @@ describe("Facade D3", function () {
 		});
 	});
 
+
 	describe("test suite for POST /query for ROOMS", function () {
 		const SERVER_URL = "http://localhost:4321";
 		const datasetId = "rooms";
 		const datasetKind = InsightDatasetKind.Rooms;
 		let datasetContent = null; // To be loaded before tests
 
-		before(async function () {
+		before(async function() {
 			// Load dataset content
 			datasetContent = fs.readFileSync("test/resources/archives/campus.zip");
 			// Add the dataset
@@ -413,33 +419,40 @@ describe("Facade D3", function () {
 					AND: [
 						{
 							IS: {
-								rooms_furniture: "*Tables*",
-							},
+								rooms_furniture: "*Tables*"
+							}
 						},
 						{
 							GT: {
-								rooms_seats: 300,
-							},
-						},
-					],
+								rooms_seats: 300
+							}
+						}
+					]
 				},
 				OPTIONS: {
-					COLUMNS: ["rooms_shortname", "maxSeats"],
+					COLUMNS: [
+						"rooms_shortname",
+						"maxSeats"
+					],
 					ORDER: {
 						dir: "DOWN",
-						keys: ["maxSeats"],
-					},
+						keys: [
+							"maxSeats"
+						]
+					}
 				},
 				TRANSFORMATIONS: {
-					GROUP: ["rooms_shortname"],
+					GROUP: [
+						"rooms_shortname"
+					],
 					APPLY: [
 						{
 							maxSeats: {
-								MAX: "rooms_seats",
-							},
-						},
-					],
-				},
+								MAX: "rooms_seats"
+							}
+						}
+					]
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			console.log(result);
@@ -452,8 +465,8 @@ describe("Facade D3", function () {
 					AND: [
 						{
 							IS: {
-								rooms_furniture: "*Tables*",
-							},
+								rooms_furniture: "*Tables*"
+							}
 						},
 						{
 							GT: {
@@ -463,22 +476,29 @@ describe("Facade D3", function () {
 					],
 				},
 				OPTIONS: {
-					COLUMNS: ["rooms_shortname", "maxSeats"],
+					COLUMNS: [
+						"rooms_shortname",
+						"maxSeats"
+					],
 					ORDER: {
 						dir: "DOWN",
-						keys: ["maxSeats"],
-					},
+						keys: [
+							"maxSeats"
+						]
+					}
 				},
 				TRANSFORMATIONS: {
-					GROUP: ["rooms_shortname"],
+					GROUP: [
+						"rooms_shortname"
+					],
 					APPLY: [
 						{
 							maxSeats: {
-								MAX: "rooms_seats",
-							},
-						},
-					],
-				},
+								MAX: "rooms_seats"
+							}
+						}
+					]
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(200);
@@ -490,33 +510,40 @@ describe("Facade D3", function () {
 					AND: [
 						{
 							IS: {
-								rooms_furniture: "*Tables*",
-							},
+								rooms_furniture: "*Tables*"
+							}
 						},
 						{
 							GT: {
-								rooms_seats: "oops",
-							},
-						},
-					],
+								rooms_seats: "oops"
+							}
+						}
+					]
 				},
 				OPTIONS: {
-					COLUMNS: ["rooms_shortname", "maxSeats"],
+					COLUMNS: [
+						"rooms_shortname",
+						"maxSeats"
+					],
 					ORDER: {
 						dir: "DOWN",
-						keys: ["maxSeats"],
-					},
+						keys: [
+							"maxSeats"
+						]
+					}
 				},
 				TRANSFORMATIONS: {
-					GROUP: ["rooms_shortname"],
+					GROUP: [
+						"rooms_shortname"
+					],
 					APPLY: [
 						{
 							maxSeats: {
-								MAX: "rooms_seats",
-							},
-						},
-					],
-				},
+								MAX: "rooms_seats"
+							}
+						}
+					]
+				}
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(400);
@@ -532,20 +559,27 @@ describe("Facade D3", function () {
 						},
 						{
 							GT: {
-								rooms_seats: 300,
-							},
-						},
-					],
+								rooms_seats: 300
+							}
+						}
+					]
 				},
 				OPTIONS: {
-					COLUMNS: ["rooms_shortname", "maxSeats"],
+					COLUMNS: [
+						"rooms_shortname",
+						"maxSeats"
+					],
 					ORDER: {
 						dir: "DOWN",
-						keys: ["maxSeats"],
-					},
+						keys: [
+							"maxSeats"
+						]
+					}
 				},
 				TRANSFORMATIONS: {
-					GROUP: ["rooms_shortname"],
+					GROUP: [
+						"rooms_shortname"
+					],
 					APPLY: [
 						{
 							maxSeats: {
@@ -563,6 +597,7 @@ describe("Facade D3", function () {
 			const result = await request(SERVER_URL).post("/query");
 			expect(result.status).to.be.equal(400);
 		});
+
 	});
 
 	// The other endpoints work similarly. You should be able to find all instructions at the supertest documentation

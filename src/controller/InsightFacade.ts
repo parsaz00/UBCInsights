@@ -67,10 +67,16 @@ export default class InsightFacade implements IInsightFacade {
 
 	private validateDatasetId(id: string): boolean {
 		const regex = /\S/;
+		console.log("ID is:", id);
+		console.log("Invalid ID for test nerd");
+		console.log("regex.test is", regex.test(id));
+		console.log("!id.includes(_) is", !id.includes("_"));
+		console.log("!this.datasetmap.map.has(id) is", !this.datasetmap.map.has(id));
 		return regex.test(id) && !id.includes("_") && !this.datasetmap.map.has(id);
 	}
 
 	private validateContent(content: string): boolean {
+		console.log("content is bad");
 		return content.length !== 0;
 	}
 
