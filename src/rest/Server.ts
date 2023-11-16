@@ -4,7 +4,6 @@ import cors from "cors";
 import InsightFacade from "../controller/InsightFacade";
 import {InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
 
-
 export default class Server {
 	private readonly port: number;
 	private express: Application;
@@ -104,7 +103,6 @@ export default class Server {
 
 		// GET Request
 		this.express.post("/datasets", this.getDatasets.bind(this));
-
 
 	}
 
@@ -211,5 +209,4 @@ export default class Server {
 			res.status(500).json({error: "Internal Server Error"});
 		}
 	}
-
 }
