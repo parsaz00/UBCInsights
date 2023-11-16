@@ -14,6 +14,7 @@ export default class Server {
 		console.info(`Server::<init>( ${port} )`);
 		this.port = port;
 		this.express = express();
+
 		this.registerMiddleware();
 		this.registerRoutes();
 		this.facade = new InsightFacade();
@@ -195,13 +196,14 @@ export default class Server {
 			}
 		}
 	}
+
 	private async getDatasets(req: Request, res: Response) {
 		try {
 			// Retrieve the datasets in list form
 			const datasets = await this.facade.listDatasets();
 			res.status(200).json({result: datasets});
 		} catch (err) {
-			// Handle any unexpected errors
+			// Handle any unexpected errors with 500
 			console.error("Error in getDatasets: ", err);
 			res.status(500).json({error: "Internal Server Error"});
 		}

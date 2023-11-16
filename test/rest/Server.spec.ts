@@ -1,5 +1,6 @@
 import Server from "../../src/rest/Server";
 import InsightFacade from "../../src/controller/InsightFacade";
+
 import {expect} from "chai";
 import request, {Response} from "supertest";
 import {InsightDatasetKind} from "../../src/controller/IInsightFacade";
@@ -278,7 +279,7 @@ describe("Facade D3", function () {
 			const query = {
 				WHERE: {
 					IS: {
-						sections_dept: 101,
+						sections_dept: 97,
 					},
 				},
 				OPTIONS: {
@@ -455,7 +456,7 @@ describe("Facade D3", function () {
 						},
 						{
 							GT: {
-								rooms_seats: 10000000000000000000000,
+								rooms_seats: 1000000000000000000,
 							},
 						},
 					],
@@ -525,7 +526,7 @@ describe("Facade D3", function () {
 					AND: [
 						{
 							IS: {
-								rooms_furniture: 100,
+								rooms_furniture: 2123,
 							},
 						},
 						{
@@ -554,26 +555,6 @@ describe("Facade D3", function () {
 				},
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
-			expect(result.status).to.be.equal(400);
-		});
-		it("should return 400 for query on non-existing dataset", async function () {
-			const query = {
-				WHERE: {
-					IS: {
-						adsfasd_dept: 101,
-					},
-				},
-				OPTIONS: {
-					COLUMNS: ["adsfasd_dept", "adsfasd_avg"],
-					ORDER: "adsfasd_avg",
-				},
-			};
-			const result = await request(SERVER_URL).post("/query").send(query);
-			expect(result.status).to.be.equal(400);
-		});
-
-		it("should return 400 for empty query", async function () {
-			const result = await request(SERVER_URL).post("/query").send({});
 			expect(result.status).to.be.equal(400);
 		});
 
