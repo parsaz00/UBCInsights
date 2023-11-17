@@ -101,7 +101,7 @@ export default class Server {
 		this.express.post("/query", this.postQuery.bind(this));
 
 		// GET Request
-		this.express.post("/datasets", this.getDatasets.bind(this));
+		this.express.get("/datasets", this.getDatasets.bind(this));
 	}
 
 	// The next two methods handle the echo service.

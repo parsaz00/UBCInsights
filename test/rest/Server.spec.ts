@@ -565,4 +565,21 @@ describe("Facade D3", function () {
 	});
 
 	// The other endpoints work similarly. You should be able to find all instructions at the supertest documentation
+	// describe("Server GET /dataset/:id/:kind", function () {
+	// 	const SERVER_URL = "http://localhost:4321";
+	//
+	// 	it("should add a sections dataset correctly and successfully", async function () {
+	// 		const datasetId = `id-${new Date().getTime()}`; // Temporary unique ID for each test
+	// 		const datasetKind = InsightDatasetKind.Sections;
+	// 		const datasetConent = fs.readFileSync("test/resources/archives/pair.zip");
+	//
+	// 		const result = await request(SERVER_URL)
+	// 			.put(`/dataset/${datasetId}/${datasetKind}`)
+	// 			.send(datasetConent)
+	// 			.set("Content-Type", "application/x-zip-compressed");
+	//
+	// 		expect(result.status).to.be.equal(200);
+	// 		expect(result.body.result).to.include(datasetId);
+	// 	});
+
 });
