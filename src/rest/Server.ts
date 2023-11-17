@@ -14,7 +14,6 @@ export default class Server {
 		console.info(`Server::<init>( ${port} )`);
 		this.port = port;
 		this.express = express();
-
 		this.registerMiddleware();
 		this.registerRoutes();
 		this.facade = new InsightFacade();
@@ -102,7 +101,7 @@ export default class Server {
 		this.express.post("/query", this.postQuery.bind(this));
 
 		// GET Request
-		this.express.post("/datasets", this.getDatasets.bind(this));
+		this.express.get("/datasets", this.getDatasets.bind(this));
 	}
 
 	// The next two methods handle the echo service.
@@ -199,6 +198,10 @@ export default class Server {
 
 	private async getDatasets(req: Request, res: Response) {
 		try {
+			const reqb = req.body;
+			if (!reqb) {
+				throw new InsightError("Missing Request Input");
+			}
 			// Retrieve the datasets in list form
 			const datasets = await this.facade.listDatasets();
 			res.status(200).json({result: datasets});
