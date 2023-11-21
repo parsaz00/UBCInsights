@@ -18,6 +18,8 @@ export class App {
 	}
 }
 
+
+//abcd
 // This ends up starting the whole system and listens on a hardcoded port (4321)
 console.info("App - starting");
 const app = new App();
