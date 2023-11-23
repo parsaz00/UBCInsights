@@ -3,6 +3,7 @@ import * as http from "http";
 import cors from "cors";
 import InsightFacade from "../controller/InsightFacade";
 import {InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
+import * as fs from "fs";
 
 export default class Server {
 	private readonly port: number;
@@ -39,8 +40,10 @@ export default class Server {
 				reject();
 			} else {
 				this.server = this.express
-					.listen(this.port, () => {
+					.listen(this.port, async () => {
 						console.info(`Server::start() - server listening on port: ${this.port}`);
+						await this.addDefaultDatasets();
+						await console.log(this.facade.listDatasets());
 						resolve();
 					})
 					.on("error", (err: Error) => {
@@ -176,6 +179,7 @@ export default class Server {
 		try {
 			// Extract the query from the request body
 			const query = req.body;
+			console.log("Received query:", JSON.stringify(query));
 
 			// Check the query is present and not null
 			if (!query) {
@@ -184,11 +188,12 @@ export default class Server {
 
 			// Perform query
 			const result = await this.facade.performQuery(query);
+			console.log("Server query results:", result);
 			res.status(200).json({result: result});
 		} catch (err) {
 			if (err instanceof InsightError) {
 				console.log(err.message);
-				res.status(400).json({error: err.message});
+				res.status(400).json({error: err.message + "the error message"});
 			} else {
 				// Handle uncaught exception with HTTP 500
 				res.status(500).json({error: "Internal Server Error"});
@@ -209,6 +214,30 @@ export default class Server {
 			// Handle any unexpected errors with 500
 			console.error("Error in getDatasets: ", err);
 			res.status(500).json({error: "Internal Server Error"});
+		}
+	}
+
+	private async addDefaultDatasets() {
+		console.log(`Current working directory: ${process.cwd()}`);
+		try {
+			// check if datasets already added
+			const existingDatasets = await this.facade.listDatasets();
+			console.log("Existing Datasets are:", existingDatasets);
+			const datasetNames = existingDatasets.map((ds) => ds.id);
+
+			// Add pair.zip if not present
+			if (!datasetNames.includes("sections")) {
+				const pairContent = fs.readFileSync("../test/resources/archives/pair.zip").toString("base64");
+				await this.facade.addDataset("sections", pairContent, InsightDatasetKind.Sections);
+				console.info("Added 'sections' dataset.");
+			}
+			if (!datasetNames.includes("rooms")) {
+				const campusContent = fs.readFileSync("../test/resources/archives/campus.zip").toString("base64");
+				await this.facade.addDataset("rooms", campusContent, InsightDatasetKind.Rooms);
+				console.info("Added 'rooms' dataset");
+			}
+		} catch (error) {
+			console.error(`Error adding default datasets: ${error}`);
 		}
 	}
 }
