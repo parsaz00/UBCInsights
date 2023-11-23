@@ -1,6 +1,5 @@
 import Server from "../../src/rest/Server";
 import InsightFacade from "../../src/controller/InsightFacade";
-
 import {expect} from "chai";
 import request, {Response} from "supertest";
 import {InsightDatasetKind} from "../../src/controller/IInsightFacade";
@@ -281,8 +280,8 @@ describe("Facade D3", function () {
 			const query = {
 				WHERE: {
 					IS: {
-						sections_dept: 97
-					}
+						sections_dept: 97,
+					},
 				},
 				OPTIONS: {
 					COLUMNS: [
@@ -470,10 +469,10 @@ describe("Facade D3", function () {
 						},
 						{
 							GT: {
-								rooms_seats: 1000000000000000000
-							}
-						}
-					]
+								rooms_seats: 1000000000000000000,
+							},
+						},
+					],
 				},
 				OPTIONS: {
 					COLUMNS: [
@@ -554,8 +553,8 @@ describe("Facade D3", function () {
 					AND: [
 						{
 							IS: {
-								rooms_furniture: 2123
-							}
+								rooms_furniture: 2123,
+							},
 						},
 						{
 							GT: {
@@ -583,11 +582,11 @@ describe("Facade D3", function () {
 					APPLY: [
 						{
 							maxSeats: {
-								MAX: "rooms_seats"
-							}
-						}
-					]
-				}
+								MAX: "rooms_seats",
+							},
+						},
+					],
+				},
 			};
 			const result = await request(SERVER_URL).post("/query").send(query);
 			expect(result.status).to.be.equal(400);
@@ -601,4 +600,21 @@ describe("Facade D3", function () {
 	});
 
 	// The other endpoints work similarly. You should be able to find all instructions at the supertest documentation
+	// describe("Server GET /dataset/:id/:kind", function () {
+	// 	const SERVER_URL = "http://localhost:4321";
+	//
+	// 	it("should add a sections dataset correctly and successfully", async function () {
+	// 		const datasetId = `id-${new Date().getTime()}`; // Temporary unique ID for each test
+	// 		const datasetKind = InsightDatasetKind.Sections;
+	// 		const datasetConent = fs.readFileSync("test/resources/archives/pair.zip");
+	//
+	// 		const result = await request(SERVER_URL)
+	// 			.put(`/dataset/${datasetId}/${datasetKind}`)
+	// 			.send(datasetConent)
+	// 			.set("Content-Type", "application/x-zip-compressed");
+	//
+	// 		expect(result.status).to.be.equal(200);
+	// 		expect(result.body.result).to.include(datasetId);
+	// 	});
+
 });
