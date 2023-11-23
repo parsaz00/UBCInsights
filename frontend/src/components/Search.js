@@ -172,6 +172,7 @@ const Search = () => {
 			{error && (
 				<div className="error-message">
 					<p>Error: {error}</p>
+
 				</div>
 			)}
 			{!isLoading && result && <ResultTable results={result} />}
