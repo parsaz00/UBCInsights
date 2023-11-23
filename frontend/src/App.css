@@ -1,0 +1,131 @@
+/* Reset and base styles */
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background: #f4f4f4;
+	color: #333;
+	line-height: 1.6;
+}
+
+/* Container for the whole app */
+.App {
+	text-align: center;
+	padding: 2rem;
+}
+
+/* Header styles */
+.App-header {
+	background-color: #005792;
+	padding: 2rem 0;
+	color: black;
+}
+
+/* Logo styles */
+.App-logo {
+	height: 40vmin;
+}
+
+/* Link styles */
+.App-link {
+	color: #61dafb;
+	margin-top: 2rem;
+	display: inline-block;
+	text-decoration: none;
+}
+
+/* Form and input styles */
+form {
+	max-width: 700px;
+	margin: 2rem auto;
+	padding: 2rem;
+	background: white;
+	border-radius: 10px;
+	box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+input[type='text'],
+input[type='number'],
+select {
+	width: 100%;
+	padding: 0.75rem;
+	margin-top: 0.5rem;
+	margin-bottom: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+input[type='checkbox'] {
+	margin-right: 0.5rem;
+}
+
+label {
+	display: block;
+	text-align: left;
+	margin-top: 1rem;
+}
+
+/* Button styles */
+button {
+	background: #005792;
+	color: #fff;
+	border: 0;
+	padding: 0.75rem 1.5rem;
+	margin: 1rem 0;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+button:hover {
+	background: #003d5b;
+}
+
+/* Table styles */
+.result-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 2rem auto;
+}
+
+.result-table th,
+.result-table td {
+	padding: 1rem;
+	border: 1px solid #ddd;
+	text-align: left;
+	background-color: white; /* Set the background color of cells to white */
+}
+
+.result-table th {
+	background-color: #005792; /* Keep header blue */
+	color: white;
+}
+
+.result-table tr {
+	background-color: white; /* Set the default background color of rows to white */
+}
+
+.result-table tr:hover {
+	background-color: #005792; /* Set hover color to blue */
+	color: green; /* Change text color to white on hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.App-header {
+		padding: 1rem 0;
+	}
+
+	form {
+		padding: 1rem;
+	}
+
+	.result-table th,
+	.result-table td {
+		padding: 0.5rem;
+	}
+}
+
+
