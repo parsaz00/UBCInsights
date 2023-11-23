@@ -170,10 +170,9 @@ const Search = () => {
 			</form>
 			{/* Display error message if there is an error */}
 			{error && (
-				<div className="error-message" style={{ color: 'red' }}>
-					<p>Error: {error}, could not find the information requested, please re-check inputs and try again</p>
-					<p>Department name, and/or year range may be invalid</p>
-					<p>Ensure years are between 1900 - 2020</p>
+				<div className="error-message">
+					<p>Error: {error}</p>
+
 				</div>
 			)}
 			{!isLoading && result && <ResultTable results={result} />}
