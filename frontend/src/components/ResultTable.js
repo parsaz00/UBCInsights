@@ -3,7 +3,7 @@ import React from "react";
 const ResultTable = ({ results }) => {
 	if (!results || results.length === 0) {
 		// If there are no results, inform the user
-		return <p>No results were found.</p>;
+		return <p style={{ color: 'red' }}>No results were found: check inputs and try again.</p>;
 	}
 
 	// Get headers from the first result object keys
