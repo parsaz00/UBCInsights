@@ -1,3 +1,4 @@
+/* Used Chat GPT for suggestions and help with css
 /* Reset and base styles */
 *, *::before, *::after {
 	box-sizing: border-box;
@@ -19,7 +20,7 @@ body {
 
 /* Header styles */
 .App-header {
-	background-color: #005792;
+	background-color: #F7983E;
 	padding: 2rem 0;
 	color: black;
 }
@@ -99,7 +100,7 @@ button:hover {
 }
 
 .result-table th {
-	background-color: #005792; /* Keep header blue */
+	background-color: #0064EC; /* Keep header blue */
 	color: white;
 }
 
@@ -109,7 +110,7 @@ button:hover {
 
 .result-table tr:hover {
 	background-color: #005792; /* Set hover color to blue */
-	color: green; /* Change text color to white on hover */
+	color: darkgreen; /* Change text color to white on hover */
 }
 
 /* Responsive adjustments */

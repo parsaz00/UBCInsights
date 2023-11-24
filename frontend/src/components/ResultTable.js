@@ -1,3 +1,5 @@
+// Ciation: Used Chat-GPT to help with creating components and general react teachings
+
 import React from "react";
 
 const ResultTable = ({ results }) => {
@@ -14,7 +16,7 @@ const ResultTable = ({ results }) => {
 			<thead className="result-table-header">
 			<tr>
 				{headers.map((header, index) => (
-					<th key={index} className="result-table-header-cell">{header.replace("sections_", "")}</th>
+					<th key={index} className="result-table-header-cell">{header.replace("sections_", "section ")}</th>
 				))}
 			</tr>
 			</thead>
