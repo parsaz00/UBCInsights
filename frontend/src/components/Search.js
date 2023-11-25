@@ -1,3 +1,4 @@
+// Ciation: Used Chat-GPT to help with creating components and general react teachings
 import React, {useState} from "react";
 import ResultTable from "./ResultTable";
 
@@ -22,7 +23,7 @@ const Search = () => {
 
 		// Add conditions for the search based on user input
 		if (courseTitle) {
-			whereConditions.push({ IS: { "sections_dept": courseTitle.toLowerCase().trim()} }); // Assuming the department is case-insensitive
+			whereConditions.push({ IS: { "sections_dept": courseTitle.toLowerCase().trim()} });
 		}
 
 		if (includeCourseId) {

@@ -1,3 +1,5 @@
+// Citation: Used chat gpt to help with understand how servers work and debugging PUT. Also used to
+// 			 Validate plans before implementing the functions
 import express, {Application, Request, Response} from "express";
 import * as http from "http";
 import cors from "cors";
